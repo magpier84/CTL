@@ -63,6 +63,85 @@ OPENCLGenerator::~OPENCLGenerator( void )
 {
 }
 
+const std::string &OPENCLGenerator::getFunctionPrefix( void ) const
+{
+    static std::string kPrefix = "";
+    return kPrefix;
+}
+
+const std::string &OPENCLGenerator::getInlineKeyword( void ) const
+{
+    static std::string kInline = "";
+    return kInline;
+}
+
+std::string OPENCLGenerator::constructNamespaceTag( const std::string &modName )
+{
+    return modName + "_";
+}
+
+void OPENCLGenerator::startCast( const char *type )
+{
+    curStream() << type << "( ";
+}
+
+std::string OPENCLGenerator::getPrecisionFunctionSuffix( void ) const
+{
+    return "";
+}
+
+void OPENCLGenerator::defineStandardTypes(std::map<StdType, TypeDefinition>& types, const std::string& funcPref,
+                                          const std::string& precSuffix)
+{
+    types[StdType::Float] = TypeDefinition("float", "", "");
+    types[StdType::Vec3f] = TypeDefinition("vec3", "", "");
+    types[StdType::Vec4f] = TypeDefinition("vec4", "", "");
+    types[StdType::Mat3f] = TypeDefinition("mat3", "", "");
+}
+
+void OPENCLGenerator::getStandardMathBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
+{
+    d.push_back(
+        FunctionDefinition(
+            "mult_f_f3",
+            "vec3 mult_f_f3( const float a, const vec3 b ) { return a * b; }" ) );
+
+    d.push_back(
+        FunctionDefinition(
+            "mult_f3_f33",
+            "vec3 mult_f3_f33( const vec3 a, const mat3 b ) { return a * b; }" ) );
+
+    d.push_back(
+        FunctionDefinition(
+            "pow10",
+            "float pow10( const float x ) { return pow(10.0, x); }" ) );
+
+    d.push_back(
+        FunctionDefinition(
+            "log10",
+            "float log10( const float x ) { return (1.0 / log(10)) * log(x); }" ) );
+}
+
+void OPENCLGenerator::getStandardHalfBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
+{
+
+}
+
+void OPENCLGenerator::getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
+{
+
+}
+
+void OPENCLGenerator::getStandardColorBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
+{
+
+}
+
+void OPENCLGenerator::getStandardInterpBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
+{
+
+}
+
 } // namespace Ctl
 
 

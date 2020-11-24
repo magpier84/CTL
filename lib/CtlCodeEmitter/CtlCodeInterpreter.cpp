@@ -17,7 +17,7 @@
 //     notice, this list of conditions and the Disclaimer of Warranty
 //     in the documentation and/or other materials provided with the
 //     distribution.
-// 
+//
 //   * Nothing in this license shall be deemed to grant any rights to
 //     trademarks, copyrights, patents, trade secrets or any other
 //     intellectual property of A.M.P.A.S. or any contributors, except
@@ -144,14 +144,15 @@ CodeInterpreter::setLanguage( Language l )
 			break;
 		case OPENCL:
 		case GLSL:
-			throw std::logic_error( "Sorry, not implemented yet" );
-//			myLanguageGenerator = new OPENCLGenerator;
-//			break;
-		case CUDA:
-			myLanguageGenerator = new CUDAGenerator;
+//			throw std::logic_error( "Sorry, not implemented yet" );
+			myLanguageGenerator = new OPENCLGenerator;
 			break;
+		case CUDA:
+//			myLanguageGenerator = new CUDAGenerator;
+//			break;
 		case NUKE:
-			myLanguageGenerator = new NukeGenerator;
+//			myLanguageGenerator = new NukeGenerator;
+            throw std::logic_error( "Sorry, not implemented yet" );
 			break;
 	}
 	myLanguageGenerator->setPrecision( curPrec );

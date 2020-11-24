@@ -251,37 +251,37 @@ CodeLContext::newNameNode( int lineNumber,
 
 
 BoolLiteralNodePtr
-CodeLContext::newBoolLiteralNode( int lineNumber, bool value, const std::string &raw ) const
+CodeLContext::newBoolLiteralNode( int lineNumber, bool value ) const
 {
-	return new CodeBoolLiteralNode( lineNumber, *this, value, raw );
+	return new CodeBoolLiteralNode( lineNumber, *this, value );
 }
 
 
 IntLiteralNodePtr
-CodeLContext::newIntLiteralNode( int lineNumber, int value, const std::string &raw ) const
+CodeLContext::newIntLiteralNode( int lineNumber, int value ) const
 {
-	return new CodeIntLiteralNode( lineNumber, *this, value, raw );
+	return new CodeIntLiteralNode( lineNumber, *this, value );
 }
 
 
 UIntLiteralNodePtr
-CodeLContext::newUIntLiteralNode( int lineNumber, unsigned value, const std::string &raw ) const
+CodeLContext::newUIntLiteralNode( int lineNumber, unsigned value ) const
 {
-	return new CodeUIntLiteralNode( lineNumber, *this, value, raw );
+	return new CodeUIntLiteralNode( lineNumber, *this, value );
 }
 
 
 HalfLiteralNodePtr
-CodeLContext::newHalfLiteralNode( int lineNumber, half value, const std::string &raw ) const
+CodeLContext::newHalfLiteralNode( int lineNumber, half value ) const
 {
-	return new CodeHalfLiteralNode( lineNumber, *this, value, raw );
+	return new CodeHalfLiteralNode( lineNumber, *this, value );
 }
 
 
 FloatLiteralNodePtr
-CodeLContext::newFloatLiteralNode( int lineNumber, number value, const std::string &raw ) const
+CodeLContext::newFloatLiteralNode( int lineNumber, float value ) const
 {
-	return new CodeFloatLiteralNode( lineNumber, *this, value, raw );
+	return new CodeFloatLiteralNode( lineNumber, *this, value );
 }
 
 

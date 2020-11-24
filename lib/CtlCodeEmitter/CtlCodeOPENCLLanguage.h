@@ -62,6 +62,30 @@ public:
 	OPENCLGenerator( void );
 	virtual ~OPENCLGenerator( void );
 
+    bool supportsReferences( void ) const { return false; }
+    bool supportsPointers( void ) const { return false; }
+    bool supportsStructOperators( void ) const { return true; }
+    bool supportsStructConstructors( void ) const { return false; }
+    bool supportsNamespaces( void ) const { return false; }
+    bool supportsHalfType( void ) const { return false; }
+
+    std::string stdLibraryAndSetup( void ) override { return ""; }
+
+protected:
+    const std::string &getFunctionPrefix( void ) const override;
+    const std::string &getInlineKeyword( void ) const override;
+    std::string constructNamespaceTag( const std::string &modName ) override;
+
+    void startCast( const char *type ) override;
+
+    std::string getPrecisionFunctionSuffix( void ) const override;
+
+    void defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix ) override;
+    virtual void getStandardMathBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardHalfBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardColorBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardInterpBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
 };
 
 } // namespace Ctl

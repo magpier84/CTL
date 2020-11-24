@@ -1,6 +1,6 @@
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/IlmCtl" )
 
-add_library( IlmCtlMath ${DO_SHARED}
+add_library( IlmCtlMath STATIC
   CtlColorSpace.cpp
   CtlLookupTable.cpp
   CtlRbfInterpolator.cpp

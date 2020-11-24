@@ -218,8 +218,7 @@ struct CodeBoolLiteralNode : public BoolLiteralNode
 {
     CodeBoolLiteralNode( int lineNumber,
 						 const LContext &lcontext,
-						 bool value,
-						 const std::string &raw );
+						 bool value );
 
     virtual void generateCode (LContext &lcontext);
     virtual char *valuePtr( void );
@@ -230,8 +229,7 @@ struct CodeIntLiteralNode : public IntLiteralNode
 {
     CodeIntLiteralNode( int lineNumber,
 						const LContext &lcontext,
-						int value,
-						const std::string &raw );
+						int value );
 
     virtual void generateCode( LContext &lcontext );
     virtual char *valuePtr( void );
@@ -242,8 +240,7 @@ struct CodeUIntLiteralNode : public UIntLiteralNode
 {
     CodeUIntLiteralNode( int lineNumber,
 						 const LContext &lcontext,
-						 unsigned int value,
-						 const std::string &raw );
+						 unsigned int value );
 
     virtual void generateCode( LContext &lcontext );
     virtual char *valuePtr();
@@ -254,8 +251,7 @@ struct CodeHalfLiteralNode : public HalfLiteralNode
 {
     CodeHalfLiteralNode( int lineNumber,
 						 const LContext &lcontext,
-						 half value,
-						 const std::string &raw );
+						 half value );
 
     virtual void generateCode( LContext &lcontext );
     virtual char *valuePtr( void );
@@ -266,8 +262,7 @@ struct CodeFloatLiteralNode : public FloatLiteralNode
 {
     CodeFloatLiteralNode( int lineNumber,
 						  const LContext &lcontext,
-						  number value,
-						  const std::string &raw );
+						  float value );
 
     virtual void generateCode( LContext &lcontext );
     virtual char *valuePtr( void );

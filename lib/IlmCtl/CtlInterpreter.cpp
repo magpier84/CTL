@@ -128,8 +128,8 @@ modulePathsInternal()
 			#if defined (WIN32) || defined (WIN64)
 			path = "."; // default windows install location?
 			#else
-            path = ".:/usr/local/lib/CTL:/usr/local/" PACKAGE
-			       "-" VERSION "/lib/CTL";
+            path = ".:/usr/local/lib/CTL:/usr/local/" CTL_PACKAGE
+			       "-" CTL_VERSION "/lib/CTL";
 			#endif
 
         size_t pos = 0;
@@ -421,6 +421,24 @@ void Interpreter::loadFile(const std::string &fileName,
 	}	
 
     _loadModule(moduleName, fileName);
+}
+
+void Interpreter::loadSource(const char* source, const std::string &_moduleName) {
+    Lock lock (_data->mutex);
+    std::string moduleName;
+    char random[32];
+
+    if(_moduleName.size()==0) {
+        // This might have unintended consequences...
+        memset(random, 0, sizeof(random));
+        snprintf(random, sizeof(random)-1, "module.%08x",
+                 (unsigned int)(time(NULL)+lrand48()));
+        moduleName=random;
+    } else {
+        moduleName=_moduleName;
+    }
+
+    _loadModule(moduleName, "", source);
 }
 
 void

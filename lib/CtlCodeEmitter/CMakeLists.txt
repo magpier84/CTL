@@ -1,8 +1,10 @@
+#project(ctlcc)
+
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/IlmCtl" "${PROJECT_SOURCE_DIR}/lib/IlmCtlMath" )
 
 include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
 
-add_library( CtlCodeEmitter ${DO_SHARED}
+add_library( CtlCodeEmitter
 	CtlCodeAddr.cpp
 	CtlCodeFunctionCall.cpp
 	CtlCodeInterpreter.cpp
@@ -15,17 +17,17 @@ add_library( CtlCodeEmitter ${DO_SHARED}
 	CtlCodeLanguageGenerator.cpp
 	CtlCodeCCommonLanguage.cpp
 	CtlCodeCPPLanguage.cpp
-	CtlCodeCUDALanguage.cpp
+#	CtlCodeCUDALanguage.cpp
 	CtlCodeOPENCLLanguage.cpp
-	CtlCodeNukeLanguage.cpp
+#	CtlCodeNukeLanguage.cpp
 )
 
 target_link_libraries( CtlCodeEmitter IlmCtlMath IlmCtl )
 
-set_target_properties( CtlCodeEmitter PROPERTIES
-  VERSION ${CTL_VERSION}
-  SOVERSION ${CTL_VERSION}
-)
+#set_target_properties( CtlCodeEmitter PROPERTIES
+#  VERSION ${CTL_VERSION}
+#  SOVERSION ${CTL_VERSION}
+#)
 
 install( FILES CtlCodeInterpreter.h DESTINATION include/CTL )
 

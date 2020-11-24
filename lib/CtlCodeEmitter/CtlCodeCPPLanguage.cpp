@@ -595,157 +595,157 @@ CPPGenerator::addStandardIncludes( void )
 ////////////////////////////////////////
 
 
-void
-CPPGenerator::defineStandardTypes( std::vector<TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix )
-{
-	types.push_back( TypeDefinition( "ctl_vec2f_t",
-"struct ctl_vec2f_t\n"
-"{\n"
-"    inline ctl_vec2f_t( void ) : x( 0 ), y( 0 ) {}\n"
-"    inline ctl_vec2f_t( ctl_number_t a, ctl_number_t b ) : x( a ), y( b ) {}\n"
-"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
-"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        ctl_number_t vals[2];\n"
-"        struct\n"
-"        {\n"
-"            ctl_number_t x;\n"
-"            ctl_number_t y;\n"
-"        };\n"
-"    };\n"
-"};" ) );
-
-	types.push_back( TypeDefinition( "ctl_vec2i_t",
-"struct ctl_vec2i_t\n"
-"{\n"
-"    inline ctl_vec2i_t( void ) : x( 0 ), y( 0 ) {}\n"
-"    inline ctl_vec2i_t( int a, int b ) : x( a ), y( b ) {}\n"
-"    inline int &operator[]( int i ) { return vals[i]; }\n"
-"    inline int operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        int vals[2];\n"
-"        struct\n"
-"        {\n"
-"            int x;\n"
-"            int y;\n"
-"        };\n"
-"    };\n"
-"};", funcPref + "ctl_vec2i_t make_vec2i( int x, int y ) { return ctl_vec2i_t( x, y ); }" ) );
-
-	types.push_back( TypeDefinition( "ctl_vec3f_t",
-"struct ctl_vec3f_t\n"
-"{\n"
-"    inline ctl_vec3f_t( void ) : x( 0 ), y( 0 ), z( 0 ) {}\n"
-"    inline ctl_vec3f_t( ctl_number_t a, ctl_number_t b, ctl_number_t c ) : x( a ), y( b ), z( c ) {}\n"
-"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
-"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        ctl_number_t vals[3];\n"
-"        struct\n"
-"        {\n"
-"            ctl_number_t x;\n"
-"            ctl_number_t y;\n"
-"            ctl_number_t z;\n"
-"        };\n"
-"    };\n"
-"};", funcPref + "ctl_vec3f_t make_vec3f( ctl_number_t x, ctl_number_t y, ctl_number_t z ) { return ctl_vec3f_t( x, y, z ); }" ) );
-
-	types.push_back( TypeDefinition( "ctl_vec3i_t",
-"struct ctl_vec3i_t\n"
-"{\n"
-"    inline ctl_vec3i_t( void ) : x( 0 ), y( 0 ), z( 0 ) {}\n"
-"    inline ctl_vec3i_t( int a, int b, int c ) : x( a ), y( b ), z( c ) {}\n"
-"    inline int &operator[]( int i ) { return vals[i]; }\n"
-"    inline int operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        int vals[3];\n"
-"        struct\n"
-"        {\n"
-"            int x;\n"
-"            int y;\n"
-"            int z;\n"
-"        };\n"
-"    };\n"
-"};", funcPref + "ctl_vec3i_t make_vec3i( int x, int y, int z ) { return ctl_vec3i_t( x, y, z ); }" ) );
-
-	types.push_back( TypeDefinition( "ctl_vec4f_t",
-"struct ctl_vec4f_t\n"
-"{\n"
-"    inline ctl_vec4f_t( void ) : x( 0 ), y( 0 ), z( 0 ), w( 0 ) {}\n"
-"    inline ctl_vec4f_t( ctl_number_t a, ctl_number_t b, ctl_number_t c, ctl_number_t d ) : x( a ), y( b ), z( c ), w( d ) {}\n"
-"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
-"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        ctl_number_t vals[4];\n"
-"        struct\n"
-"        {\n"
-"            ctl_number_t x;\n"
-"            ctl_number_t y;\n"
-"            ctl_number_t z;\n"
-"            ctl_number_t w;\n"
-"        };\n"
-"    };\n"
-"};" ) );
-
-	types.push_back( TypeDefinition( "ctl_vec4i_t",
-"struct ctl_vec4i_t\n"
-"{\n"
-"    inline ctl_vec4i_t( void ) : x( 0 ), y( 0 ), z( 0 ), w( 0 ) {}\n"
-"    inline ctl_vec4i_t( int a, int b, int c, int d ) : x( a ), y( b ), z( c ), w( d ) {}\n"
-"    inline int &operator[]( int i ) { return vals[i]; }\n"
-"    inline int operator[]( int i ) const { return vals[i]; }\n"
-"    union\n"
-"    {\n"
-"        int vals[4];\n"
-"        struct\n"
-"        {\n"
-"            int x;\n"
-"            int y;\n"
-"            int z;\n"
-"            int w;\n"
-"        };\n"
-"    };\n"
-"};" ) );
-
-	types.push_back( TypeDefinition( "ctl_mat33f_t",
-"struct ctl_mat33f_t\n"
-"{\n"
-"    inline ctl_mat33f_t( void ) { identity(); }\n"
-"    inline ctl_mat33f_t( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22 ) { vals[0][0] = m00; vals[0][1] = m01; vals[0][2] = m02; vals[1][0] = m10; vals[1][1] = m11; vals[1][2] = m12; vals[2][0] = m20; vals[2][1] = m21; vals[2][2] = m22; }\n"
-"    inline void identity( void ) { vals[0][0] = vals[1][1] = vals[2][2] = ctl_number_t(1); vals[0][1] = vals[0][2] = vals[1][0] = vals[1][1] = vals[1][2] = vals[2][0] = vals[2][1] = vals[2][2] = ctl_number_t(0); }\n"
-"    inline ctl_number_t *operator[]( int i ) { return vals[i]; }\n"
-"    inline const ctl_number_t *operator[]( int i ) const { return vals[i]; }\n"
-"    ctl_number_t vals[3][3];\n"
-"};" ) );
-
-	types.push_back( TypeDefinition( "ctl_mat44f_t",
-"struct ctl_mat44f_t\n"
-"{\n"
-"    inline ctl_mat44f_t( void ) { identity(); }\n"
-"    inline ctl_mat44f_t( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m03, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m13, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22, ctl_number_t m23, ctl_number_t m30, ctl_number_t m31, ctl_number_t m32, ctl_number_t m33 ) { vals[0][0] = m00; vals[0][1] = m01; vals[0][2] = m02; vals[0][3] = m03; vals[1][0] = m10; vals[1][1] = m11; vals[1][2] = m12; vals[1][3] = m13; vals[2][0] = m20; vals[2][1] = m21; vals[2][2] = m22; vals[2][3] = m23; vals[3][0] = m30; vals[3][1] = m31; vals[3][2] = m32; vals[3][3] = m33; }\n"
-"    inline void identity( void )\n"
-"    {\n"
-"        for ( int i = 0; i < 4; ++i )\n"
-"            for ( int j = 0; j < 4; ++j )\n"
-"                vals[i][j] = (i == j) ? ctl_number_t(1) : ctl_number_t(0);\n"
-"    }\n"
-"    inline ctl_number_t *operator[]( int i ) { return vals[i]; }\n"
-"    inline const ctl_number_t *operator[]( int i ) const { return vals[i]; }\n"
-"    ctl_number_t vals[4][4];\n"
-"};" ) );
-
-	types.push_back( TypeDefinition( "Chromaticities", "struct Chromaticities { ctl_vec2f_t red; ctl_vec2f_t green; ctl_vec2f_t blue; ctl_vec2f_t white; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
-	types.push_back( TypeDefinition( "Box2i", "struct Box2i { ctl_vec2i_t min; ctl_vec2i_t max; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2i_t" );
-	types.push_back( TypeDefinition( "Box2f", "struct Box2f { ctl_vec2f_t min; ctl_vec2f_t max; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
-}
+//void
+//CPPGenerator::defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix )
+//{
+//	types.push_back( TypeDefinition( "ctl_vec2f_t",
+//"struct ctl_vec2f_t\n"
+//"{\n"
+//"    inline ctl_vec2f_t( void ) : x( 0 ), y( 0 ) {}\n"
+//"    inline ctl_vec2f_t( ctl_number_t a, ctl_number_t b ) : x( a ), y( b ) {}\n"
+//"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
+//"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        ctl_number_t vals[2];\n"
+//"        struct\n"
+//"        {\n"
+//"            ctl_number_t x;\n"
+//"            ctl_number_t y;\n"
+//"        };\n"
+//"    };\n"
+//"};" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_vec2i_t",
+//"struct ctl_vec2i_t\n"
+//"{\n"
+//"    inline ctl_vec2i_t( void ) : x( 0 ), y( 0 ) {}\n"
+//"    inline ctl_vec2i_t( int a, int b ) : x( a ), y( b ) {}\n"
+//"    inline int &operator[]( int i ) { return vals[i]; }\n"
+//"    inline int operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        int vals[2];\n"
+//"        struct\n"
+//"        {\n"
+//"            int x;\n"
+//"            int y;\n"
+//"        };\n"
+//"    };\n"
+//"};", funcPref + "ctl_vec2i_t make_vec2i( int x, int y ) { return ctl_vec2i_t( x, y ); }" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_vec3f_t",
+//"struct ctl_vec3f_t\n"
+//"{\n"
+//"    inline ctl_vec3f_t( void ) : x( 0 ), y( 0 ), z( 0 ) {}\n"
+//"    inline ctl_vec3f_t( ctl_number_t a, ctl_number_t b, ctl_number_t c ) : x( a ), y( b ), z( c ) {}\n"
+//"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
+//"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        ctl_number_t vals[3];\n"
+//"        struct\n"
+//"        {\n"
+//"            ctl_number_t x;\n"
+//"            ctl_number_t y;\n"
+//"            ctl_number_t z;\n"
+//"        };\n"
+//"    };\n"
+//"};", funcPref + "ctl_vec3f_t make_vec3f( ctl_number_t x, ctl_number_t y, ctl_number_t z ) { return ctl_vec3f_t( x, y, z ); }" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_vec3i_t",
+//"struct ctl_vec3i_t\n"
+//"{\n"
+//"    inline ctl_vec3i_t( void ) : x( 0 ), y( 0 ), z( 0 ) {}\n"
+//"    inline ctl_vec3i_t( int a, int b, int c ) : x( a ), y( b ), z( c ) {}\n"
+//"    inline int &operator[]( int i ) { return vals[i]; }\n"
+//"    inline int operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        int vals[3];\n"
+//"        struct\n"
+//"        {\n"
+//"            int x;\n"
+//"            int y;\n"
+//"            int z;\n"
+//"        };\n"
+//"    };\n"
+//"};", funcPref + "ctl_vec3i_t make_vec3i( int x, int y, int z ) { return ctl_vec3i_t( x, y, z ); }" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_vec4f_t",
+//"struct ctl_vec4f_t\n"
+//"{\n"
+//"    inline ctl_vec4f_t( void ) : x( 0 ), y( 0 ), z( 0 ), w( 0 ) {}\n"
+//"    inline ctl_vec4f_t( ctl_number_t a, ctl_number_t b, ctl_number_t c, ctl_number_t d ) : x( a ), y( b ), z( c ), w( d ) {}\n"
+//"    inline ctl_number_t &operator[]( int i ) { return vals[i]; }\n"
+//"    inline ctl_number_t operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        ctl_number_t vals[4];\n"
+//"        struct\n"
+//"        {\n"
+//"            ctl_number_t x;\n"
+//"            ctl_number_t y;\n"
+//"            ctl_number_t z;\n"
+//"            ctl_number_t w;\n"
+//"        };\n"
+//"    };\n"
+//"};" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_vec4i_t",
+//"struct ctl_vec4i_t\n"
+//"{\n"
+//"    inline ctl_vec4i_t( void ) : x( 0 ), y( 0 ), z( 0 ), w( 0 ) {}\n"
+//"    inline ctl_vec4i_t( int a, int b, int c, int d ) : x( a ), y( b ), z( c ), w( d ) {}\n"
+//"    inline int &operator[]( int i ) { return vals[i]; }\n"
+//"    inline int operator[]( int i ) const { return vals[i]; }\n"
+//"    union\n"
+//"    {\n"
+//"        int vals[4];\n"
+//"        struct\n"
+//"        {\n"
+//"            int x;\n"
+//"            int y;\n"
+//"            int z;\n"
+//"            int w;\n"
+//"        };\n"
+//"    };\n"
+//"};" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_mat33f_t",
+//"struct ctl_mat33f_t\n"
+//"{\n"
+//"    inline ctl_mat33f_t( void ) { identity(); }\n"
+//"    inline ctl_mat33f_t( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22 ) { vals[0][0] = m00; vals[0][1] = m01; vals[0][2] = m02; vals[1][0] = m10; vals[1][1] = m11; vals[1][2] = m12; vals[2][0] = m20; vals[2][1] = m21; vals[2][2] = m22; }\n"
+//"    inline void identity( void ) { vals[0][0] = vals[1][1] = vals[2][2] = ctl_number_t(1); vals[0][1] = vals[0][2] = vals[1][0] = vals[1][1] = vals[1][2] = vals[2][0] = vals[2][1] = vals[2][2] = ctl_number_t(0); }\n"
+//"    inline ctl_number_t *operator[]( int i ) { return vals[i]; }\n"
+//"    inline const ctl_number_t *operator[]( int i ) const { return vals[i]; }\n"
+//"    ctl_number_t vals[3][3];\n"
+//"};" ) );
+//
+//	types.push_back( TypeDefinition( "ctl_mat44f_t",
+//"struct ctl_mat44f_t\n"
+//"{\n"
+//"    inline ctl_mat44f_t( void ) { identity(); }\n"
+//"    inline ctl_mat44f_t( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m03, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m13, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22, ctl_number_t m23, ctl_number_t m30, ctl_number_t m31, ctl_number_t m32, ctl_number_t m33 ) { vals[0][0] = m00; vals[0][1] = m01; vals[0][2] = m02; vals[0][3] = m03; vals[1][0] = m10; vals[1][1] = m11; vals[1][2] = m12; vals[1][3] = m13; vals[2][0] = m20; vals[2][1] = m21; vals[2][2] = m22; vals[2][3] = m23; vals[3][0] = m30; vals[3][1] = m31; vals[3][2] = m32; vals[3][3] = m33; }\n"
+//"    inline void identity( void )\n"
+//"    {\n"
+//"        for ( int i = 0; i < 4; ++i )\n"
+//"            for ( int j = 0; j < 4; ++j )\n"
+//"                vals[i][j] = (i == j) ? ctl_number_t(1) : ctl_number_t(0);\n"
+//"    }\n"
+//"    inline ctl_number_t *operator[]( int i ) { return vals[i]; }\n"
+//"    inline const ctl_number_t *operator[]( int i ) const { return vals[i]; }\n"
+//"    ctl_number_t vals[4][4];\n"
+//"};" ) );
+//
+//	types.push_back( TypeDefinition( "Chromaticities", "struct Chromaticities { ctl_vec2f_t red; ctl_vec2f_t green; ctl_vec2f_t blue; ctl_vec2f_t white; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
+//	types.push_back( TypeDefinition( "Box2i", "struct Box2i { ctl_vec2i_t min; ctl_vec2i_t max; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2i_t" );
+//	types.push_back( TypeDefinition( "Box2f", "struct Box2f { ctl_vec2f_t min; ctl_vec2f_t max; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
+//}
 
 
 ////////////////////////////////////////

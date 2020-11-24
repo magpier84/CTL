@@ -581,6 +581,21 @@ CodeStdTypes::funcType_f3_f_f3( void )
 	return _funcType_f3_f_f3;
 }
 
+FunctionTypePtr
+CodeStdTypes::funcType_f3_f3_f( void )
+{
+    if ( !_funcType_f3_f3_f )
+    {
+        ParamVector p;
+        p.push_back( Param( "a1", type_f3(), 0, RWA_READ, false ) );
+        p.push_back( Param( "a2", type_f(), 0, RWA_READ, false ) );
+
+        _funcType_f3_f3_f =
+            _lcontext.newFunctionType( type_f3(), false, p );
+    }
+
+    return _funcType_f3_f3_f;
+}
 
 FunctionTypePtr
 CodeStdTypes::funcType_f_f3_f3( void )

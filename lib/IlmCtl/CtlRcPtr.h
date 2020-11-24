@@ -161,10 +161,10 @@ class RcPtr
     // as checked by dynamic_cast<S*>(t.pointer()).
     //----------------------------------------------------------------
 
-	template <class S>
-	bool is_subclass () const;
+    template <class S>
+    bool is_subclass () const;
 
-	//----------------------------------------------------------------
+    //----------------------------------------------------------------
     // Dynamic cast:
     //
     // t.cast() returns a new reference-counted pointer, s, of type
@@ -371,12 +371,13 @@ RcPtr<T>::operator = (const RcPtr<S> &rp)
     return *this;
 }
 
+
 template <class T>
 template <class S>
 bool
 RcPtr<T>::is_subclass () const
 {
-	return dynamic_cast<S *>(_p) != NULL;
+    return dynamic_cast<S *>(_p) != nullptr;
 }
 
 

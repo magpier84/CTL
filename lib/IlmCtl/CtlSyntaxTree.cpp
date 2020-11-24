@@ -474,7 +474,8 @@ BinaryOpNode::computeType (LContext &lcontext, const SymbolInfoPtr &initInfo)
     ArrayTypePtr arrayType = leftOperand->type.cast<ArrayType>();
     StructTypePtr structType = leftOperand->type.cast<StructType>();
 
-    if( arrayType || structType )
+    // rs
+    if( /*arrayType || */structType )
     {
 	MESSAGE_LE (lcontext, ERR_OP_TYPE, lineNumber,
 	    "Invalid operand types for " << tokenAsString (op) << " "

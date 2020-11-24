@@ -175,6 +175,10 @@ public:
 						    					//	(float,
 												//	 float[3])
 
+    FunctionTypePtr	funcType_f3_f3_f( void );	// float[3][3] func
+                                                //	(float,
+                                                //	 float[3][3])
+
     FunctionTypePtr	funcType_f_f3_f3( void );	// float func
 						    					//	(float[3],
 												//	 float[3])
@@ -267,6 +271,7 @@ public:
     FunctionTypePtr	_funcType_f3_f3_f44;
     FunctionTypePtr	_funcType_f3_f3_f3;
     FunctionTypePtr	_funcType_f3_f_f3;
+    FunctionTypePtr	_funcType_f3_f3_f;
     FunctionTypePtr	_funcType_f_f3_f3;
     FunctionTypePtr	_funcType_f_f3;
     FunctionTypePtr	_funcType_f44_chr_f;

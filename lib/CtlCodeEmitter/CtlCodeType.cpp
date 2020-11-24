@@ -614,21 +614,21 @@ CodeFloatType::CodeFloatType( void )
 size_t
 CodeFloatType::objectSize( void ) const
 {
-	return sizeof( number );
+	return sizeof( float );
 }
 
 
 size_t
 CodeFloatType::alignedObjectSize( void ) const
 {
-	return sizeof( number );
+	return sizeof( float );
 }
 
 
 size_t
 CodeFloatType::objectAlignment( void ) const
 {
-	return sizeof( number );
+	return sizeof( float );
 }
 
 
@@ -864,6 +864,28 @@ void
 CodeArrayType::generateCode( const SyntaxNodePtr &node,
 							 LContext &ctxt ) const
 {
+    // rs
+    CodeLContext &lctxt = static_cast<CodeLContext &>(ctxt);
+    BinaryOpNode *binOp = dynamic_cast<BinaryOpNode *>( node.pointer() );
+    if ( binOp )
+    {
+        switch (binOp->op)
+        {
+            case TK_TIMES:
+                lctxt.generator().emitToken( binOp->op );
+                break;
+
+            default:
+                MESSAGE_LE( ctxt, ERR_OP_TYPE, node->lineNumber,
+                            "Invalid operand types "
+                            "for " << tokenAsString (binOp->op) << " operator "
+                                                                   "(" << binOp->leftOperand->type->asString() << " " <<
+                                   tokenAsString (binOp->op) << " " <<
+                                   binOp->rightOperand->type->asString() << ")." );
+        }
+
+        return;
+    }
 }
 
 

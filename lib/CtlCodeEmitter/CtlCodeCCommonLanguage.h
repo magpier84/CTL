@@ -126,6 +126,8 @@ public:
 
 	virtual void emitToken( Token t );
 
+    bool isConstExpr(const ExprNodePtr& expr) const;
+
 protected:
 	struct ModuleUsage
 	{
@@ -171,6 +173,21 @@ protected:
 	};
 	typedef std::vector<FunctionDefinition> FuncDeclList;
 
+	enum class StdType
+    {
+        Int,
+        Float,
+        Vec2f,
+        Vec2i,
+        Vec3f,
+        Vec3i,
+        Vec4f,
+        Vec4i,
+        Mat3f,
+        Mat4f,
+        Structs
+    };
+
 	struct ModuleDefinition
 	{
 		inline ModuleDefinition( void ) : module( NULL ), typeCode( NULL ), fwdCode( NULL ), varCode( NULL ), funCode( NULL ) {}
@@ -180,7 +197,7 @@ protected:
 		std::string call_prefix;
 		std::string prefix;
 		std::string suffix;
-		std::vector<TypeDefinition> types;
+		std::map<StdType, TypeDefinition> types;
 		std::vector<GlobalVariableDefinition> variables;
 		FuncDeclList functions;
 		std::string headerCode;
@@ -199,7 +216,7 @@ protected:
 
 	virtual void addStandardIncludes( void );
 	virtual void initStandardLibraryBodies( ModuleDefinition &m );
-	virtual void defineStandardTypes( std::vector<TypeDefinition> &types, const std::string &funcPref, const std::string &precSuffix );
+	virtual void defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string &precSuffix );
 	virtual void getStandardMathBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
 	virtual void getStandardHalfBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
 	virtual void getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
@@ -215,7 +232,9 @@ protected:
 	virtual bool supportsNamespaces( void ) const = 0;
 	virtual bool supportsHalfType( void ) const = 0;
 	virtual bool supportsReferences( void ) const = 0;
+    virtual bool supportsPointers( void ) const { return supportsReferences(); }
 	virtual bool supportsStructOperators( void ) const = 0;
+    virtual bool supportsStructConstructors( void ) const { return supportsStructOperators(); }
 	virtual bool needsStructTypedefs( void ) const = 0;
 
 	virtual std::string constructNamespaceTag( const std::string &modName ) = 0;

@@ -150,6 +150,10 @@ CCommonLanguage::initStdLibrary( void )
 	myStdMathFuncs["fmod"] = "fmod" + precSuffix;
 	myStdMathFuncs["hypot"] = "hypot" + precSuffix;
 
+    myStdMathFuncs["min"] = "min";
+    myStdMathFuncs["max"] = "max";
+    myStdMathFuncs["pow3"] = "pow";
+
 	std::string fltconstprefix, fltconstsuff, mathconstsuff;
 	switch ( getPrecision() )
 	{
@@ -220,12 +224,12 @@ CCommonLanguage::initStandardLibraryBodies( ModuleDefinition &stdMod )
 
 
 void
-CCommonLanguage::defineStandardTypes( std::vector<TypeDefinition> &types, const std::string &funcPref, const std::string &precSuffix )
+CCommonLanguage::defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string &precSuffix )
 {
 	if ( supportsStructOperators() )
 		throw std::logic_error( "Subclass supports struct operators but does not define appropriate standard types" );
 
-	types.push_back( TypeDefinition( "ctl_vec2f_t",
+	types[StdType::Vec2f] = TypeDefinition( "ctl_vec2f_t",
 "struct ctl_vec2f_t\n"
 "{\n"
 "    union\n"
@@ -239,9 +243,9 @@ CCommonLanguage::defineStandardTypes( std::vector<TypeDefinition> &types, const 
 "    };\n"
 "};",
 funcPref + "ctl_vec2f_t make_vec2f( ctl_number_t x, ctl_number_t y )\n"
-"{ ctl_vec2f_t r; r.x = x; r.y = y; return r; }" ) );
+"{ ctl_vec2f_t r; r.x = x; r.y = y; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_vec2i_t",
+	types[StdType::Vec2i] = TypeDefinition( "ctl_vec2i_t",
 "struct ctl_vec2i_t\n"
 "{\n"
 "    union\n"
@@ -255,9 +259,9 @@ funcPref + "ctl_vec2f_t make_vec2f( ctl_number_t x, ctl_number_t y )\n"
 "    };\n"
 "};",
 funcPref + "ctl_vec2i_t make_vec2i( int x, int y )\n"
-"{ ctl_vec2i_t r; r.x = x; r.y = y; return r; }" ) );
+"{ ctl_vec2i_t r; r.x = x; r.y = y; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_vec3f_t",
+	types[StdType::Vec3f] = TypeDefinition( "ctl_vec3f_t",
 "struct ctl_vec3f_t\n"
 "{\n"
 "    union\n"
@@ -272,9 +276,9 @@ funcPref + "ctl_vec2i_t make_vec2i( int x, int y )\n"
 "    };\n"
 "};",
 funcPref + "ctl_vec3f_t make_vec3f( ctl_number_t x, ctl_number_t y, ctl_number_t z )\n"
-"{ ctl_vec3f_t r; r.x = x; r.y = y; r.z = z; return r; }" ) );
+"{ ctl_vec3f_t r; r.x = x; r.y = y; r.z = z; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_vec3i_t",
+	types[StdType::Vec3i] = TypeDefinition( "ctl_vec3i_t",
 "struct ctl_vec3i_t\n"
 "{\n"
 "    union\n"
@@ -289,9 +293,9 @@ funcPref + "ctl_vec3f_t make_vec3f( ctl_number_t x, ctl_number_t y, ctl_number_t
 "    };\n"
 "};",
 funcPref + "ctl_vec3i_t make_vec3i( int x, int y, int z )\n"
-"{ ctl_vec3i_t r; r.x = x; r.y = y; r.z = z; return r; }" ) );
+"{ ctl_vec3i_t r; r.x = x; r.y = y; r.z = z; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_vec4f_t",
+	types[StdType::Vec4f] = TypeDefinition( "ctl_vec4f_t",
 "struct ctl_vec4f_t\n"
 "{\n"
 "    union\n"
@@ -307,9 +311,9 @@ funcPref + "ctl_vec3i_t make_vec3i( int x, int y, int z )\n"
 "    };\n"
 "};",
 funcPref + "ctl_vec4f_t make_vec4f( ctl_number_t x, ctl_number_t y, ctl_number_t z, ctl_number_t w )\n"
-"{ ctl_vec4f_t r; r.x = x; r.y = y; r.z = z; r.w = w; return r; }" ) );
+"{ ctl_vec4f_t r; r.x = x; r.y = y; r.z = z; r.w = w; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_vec4i_t",
+	types[StdType::Vec4i] = TypeDefinition( "ctl_vec4i_t",
 "struct ctl_vec4i_t\n"
 "{\n"
 "    union\n"
@@ -325,9 +329,9 @@ funcPref + "ctl_vec4f_t make_vec4f( ctl_number_t x, ctl_number_t y, ctl_number_t
 "    };\n"
 "};",
 funcPref + "ctl_vec4i_t make_vec4i( int x, int y, int z, int w )\n"
-"{ ctl_vec4i_t r; r.x = x; r.y = y; r.z = z; r.w = w; return r; }" ) );
+"{ ctl_vec4i_t r; r.x = x; r.y = y; r.z = z; r.w = w; return r; }" );
 
-	types.push_back( TypeDefinition( "ctl_mat33f_t", "struct ctl_mat33f_t { ctl_number_t vals[3][3]; };",
+	types[StdType::Mat3f] = TypeDefinition( "ctl_mat33f_t", "struct ctl_mat33f_t { ctl_number_t vals[3][3]; };",
 funcPref + "ctl_mat33f_t make_mat33f( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22 )\n"
 "{\n"
 "    ctl_mat33f_t r;\n"
@@ -341,8 +345,8 @@ funcPref + "ctl_mat33f_t make_mat33f( ctl_number_t m00, ctl_number_t m01, ctl_nu
 "    r.vals[2][1] = m21;\n"
 "    r.vals[2][2] = m22;\n"
 "    return r;\n"
-"}" ) );
-	types.push_back( TypeDefinition( "ctl_mat44f_t", "struct ctl_mat44f_t { ctl_number_t vals[4][4]; };",
+"}" );
+	types[StdType::Mat4f] = TypeDefinition( "ctl_mat44f_t", "struct ctl_mat44f_t { ctl_number_t vals[4][4]; };",
 funcPref + "ctl_mat44f_t make_mat44f( ctl_number_t m00, ctl_number_t m01, ctl_number_t m02, ctl_number_t m03, ctl_number_t m10, ctl_number_t m11, ctl_number_t m12, ctl_number_t m13, ctl_number_t m20, ctl_number_t m21, ctl_number_t m22, ctl_number_t m23, ctl_number_t m30, ctl_number_t m31, ctl_number_t m32, ctl_number_t m33 )\n"
 "{\n"
 "    ctl_mat44f_t r;\n"
@@ -363,14 +367,14 @@ funcPref + "ctl_mat44f_t make_mat44f( ctl_number_t m00, ctl_number_t m01, ctl_nu
 "    r.vals[3][2] = m32;\n"
 "    r.vals[3][3] = m33;\n"
 "    return r;\n"
-"}" ) );
+"}" );
 
-	types.push_back( TypeDefinition( "Chromaticities", "struct Chromaticities { ctl_vec2f_t red; ctl_vec2f_t green; ctl_vec2f_t blue; ctl_vec2f_t white; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
-	types.push_back( TypeDefinition( "Box2i", "struct Box2i { ctl_vec2i_t min; ctl_vec2i_t max; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2i_t" );
-	types.push_back( TypeDefinition( "Box2f", "struct Box2f { ctl_vec2f_t min; ctl_vec2f_t max; };" ) );
-	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
+//	types.push_back( TypeDefinition( "Chromaticities", "struct Chromaticities { ctl_vec2f_t red; ctl_vec2f_t green; ctl_vec2f_t blue; ctl_vec2f_t white; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
+//	types.push_back( TypeDefinition( "Box2i", "struct Box2i { ctl_vec2i_t min; ctl_vec2i_t max; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2i_t" );
+//	types.push_back( TypeDefinition( "Box2f", "struct Box2f { ctl_vec2f_t min; ctl_vec2f_t max; };" ) );
+//	types.back().moduleUsage[NULL].types.insert( "ctl_vec2f_t" );
 }
 
 
@@ -1222,8 +1226,8 @@ CCommonLanguage::getCode( bool calledOnly )
 			}
 			curMod.initCode.clear();
 			indexmap[curMod.module] = md;
-			for ( size_t t = 0, nT = curMod.types.size(); t != nT; ++t )
-				curMod.types[t].emit = false;
+			for ( auto& t : curMod.types )
+				t.second.emit = false;
 			for ( size_t v = 0, nV = curMod.variables.size(); v != nV; ++v )
 				curMod.variables[v].emit = false;
 			for ( size_t f = 0, nF = curMod.functions.size(); f != nF; ++f )
@@ -1324,10 +1328,10 @@ CCommonLanguage::getCode( bool calledOnly )
 				curStream() << curMod.prefix;
 			}
 
-			for ( size_t t = 0, nT = curMod.types.size(); t != nT; ++t )
+			for ( const auto& t : curMod.types )
 			{
 				newlineAndIndent();
-				const TypeDefinition &curT = curMod.types[t];
+				const TypeDefinition &curT = t.second;
 				curStream() << curT.declare;
 				if ( ! curT.constfunc.empty() )
 				{
@@ -1447,7 +1451,7 @@ CCommonLanguage::recurseUsage( const std::map<const Module *, size_t> &indexmap,
 
 		ModuleDefinition &curMod = myModules[mi->second];
 		ModuleUsage &modUse = i->second;
-		std::vector<TypeDefinition> &types = curMod.types;
+		auto &types = curMod.types;
 		std::vector<GlobalVariableDefinition> &variables = curMod.variables;
 		FuncDeclList &functions = curMod.functions;
 		std::set<std::string>::iterator curUse;
@@ -1459,11 +1463,11 @@ CCommonLanguage::recurseUsage( const std::map<const Module *, size_t> &indexmap,
 			curUse = modUse.types.begin();
 			while ( curUse != modUse.types.end() )
 			{
-				for ( size_t t = 0, nT = types.size(); t != nT; ++t )
+				for ( auto& t : types )
 				{
-					if ( types[t].name == (*curUse) )
+					if ( t.second.name == (*curUse) )
 					{
-						traverseAndEmit( indexmap, types[t] );
+						traverseAndEmit( indexmap, t.second );
 						break;
 					}
 				}
@@ -1757,7 +1761,8 @@ CCommonLanguage::module( CodeLContext &ctxt, const CodeModuleNode &m )
 			popStream();
 			curDef.declare = curStruct.str();
 			myCurModuleUsage = curUsage;
-			modDef.types.push_back( curDef );
+			const auto structType = StdType(size_t(StdType::Structs) + i);
+			modDef.types[structType] = ( curDef );
 		}
 	}
 
@@ -1900,10 +1905,17 @@ CCommonLanguage::function( CodeLContext &ctxt, const CodeFunctionNode &f )
 	pushStream( funcBodyStream );
 
 	newlineAndIndent();
-	curStream() << getFunctionPrefix() << ' ';
+	const auto& functionPrefix = getFunctionPrefix();
+	if (!functionPrefix.empty()) {
+        curStream() << getFunctionPrefix() << ' ';
+    }
 
-	if ( ! isMain && myFuncsUsedInInit.find( f.name ) == myFuncsUsedInInit.end() )
-		curStream() << getInlineKeyword() << ' ';
+	if ( ! isMain && myFuncsUsedInInit.find( f.name ) == myFuncsUsedInInit.end() ) {
+	    const auto& inlineKeyword = getInlineKeyword();
+	    if (!inlineKeyword.empty()) {
+            curStream() << getInlineKeyword() << ' ';
+        }
+    }
 
 	variable( ctxt, std::string(), functionType->returnType(),
 			  false, false, false, false );
@@ -1980,6 +1992,34 @@ CCommonLanguage::function( CodeLContext &ctxt, const CodeFunctionNode &f )
 
 ////////////////////////////////////////
 
+bool CCommonLanguage::isConstExpr(const ExprNodePtr& expr) const
+{
+    if (expr.is_subclass<CodeCallNode>()) {
+        return false;
+    }
+    else if (expr.is_subclass<CodeNameNode>()) {
+        const auto nameNode = expr.cast<CodeNameNode>();
+        if (!nameNode->info->value()) {
+            return false;
+        }
+//        if (nameNode->info->isWritable() || myCurInputVars.find(nameNode->name) != myCurInputVars.end()) {
+//            return false;
+//        }
+    }
+    else if (expr.is_subclass<CodeBinaryOpNode>()) {
+        const auto binaryNode = expr.cast<CodeBinaryOpNode>();
+        return isConstExpr(binaryNode->leftOperand) && isConstExpr(binaryNode->rightOperand);
+    }
+    else if (expr.is_subclass<CodeValueNode>()) {
+        const auto valueNode = expr.cast<CodeValueNode>();
+        for (const auto& elem : valueNode->elements) {
+            if (!isConstExpr(elem)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 void
 CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
@@ -2072,7 +2112,7 @@ CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
 	{
 		newlineAndIndent();
 		InitType initT = variable( ctxt, v.name, v.info->type(),
-								   ! v.info->isWritable(), false, false, false );
+								   ! v.info->isWritable() && isConstExpr(v.initialValue), false, false, false );
 
 		std::string delInit = doInit( initT, ctxt, v.info->type(),
 									  v.initialValue, v.name );
@@ -2429,7 +2469,7 @@ CCommonLanguage::name( CodeLContext &ctxt, const CodeNameNode &v )
 			curStream() << outname;
 		else
 		{
-			if ( myCurOutputVars.find( outname ) != myCurOutputVars.end() )
+			if ( myCurOutputVars.find( outname ) != myCurOutputVars.end() && supportsPointers() )
 				curStream() << "*(" << outname << ")";
 			else
 				curStream() << outname;
@@ -2454,10 +2494,7 @@ CCommonLanguage::boolLit( CodeLContext &ctxt, const CodeBoolLiteralNode &v )
 void
 CCommonLanguage::intLit( CodeLContext &ctxt, const CodeIntLiteralNode &v )
 {
-	if ( v.literal.empty() )
-		curStream() << v.value;
-	else
-		curStream() << v.literal;
+    curStream() << v.value;
 }
 
 
@@ -2467,10 +2504,7 @@ CCommonLanguage::intLit( CodeLContext &ctxt, const CodeIntLiteralNode &v )
 void
 CCommonLanguage::uintLit( CodeLContext &ctxt, const CodeUIntLiteralNode &v )
 {
-	if ( v.literal.empty() )
-		curStream() << v.value;
-	else
-		curStream() << v.literal;
+    curStream() << v.value;
 }
 
 
@@ -2487,10 +2521,7 @@ CCommonLanguage::halfLit( CodeLContext &ctxt, const CodeHalfLiteralNode &v )
 		throw std::logic_error( "Language does not support half" );
 	}
 
-	if ( v.literal.empty() )
-		curStream() << "half( " << std::setprecision( std::numeric_limits<half>::digits ) << static_cast<number>( v.value ) << "F )";
-	else
-		curStream() << "half( " << v.literal << " )";
+    curStream() << "half( " << std::setprecision( std::numeric_limits<half>::digits ) << static_cast<float>( v.value ) << "F )";
 }
 
 
@@ -2500,10 +2531,7 @@ CCommonLanguage::halfLit( CodeLContext &ctxt, const CodeHalfLiteralNode &v )
 void
 CCommonLanguage::floatLit( CodeLContext &ctxt, const CodeFloatLiteralNode &v )
 {
-	if ( v.literal.empty() )
-		curStream() << std::fixed << std::setprecision( std::numeric_limits<number>::digits ) << static_cast<number>( v.value ) << getPrecisionTypeSuffix();
-	else
-		curStream() << v.literal;
+    curStream() << std::fixed << std::setprecision( std::numeric_limits<float>::digits ) << static_cast<float>( v.value ) << getPrecisionTypeSuffix();
 }
 
 
@@ -2707,7 +2735,8 @@ CCommonLanguage::startToHalf( void )
 void
 CCommonLanguage::startToFloat( void )
 {
-	startCast( "ctl_number_t" );
+    const auto it = myModules.front().types.find(StdType::Float);
+	startCast( it->second.name.c_str() );
 }
 
 
@@ -2790,7 +2819,7 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 				nPerCollapseChunk *= abs( arr_sizes[i] );
 		}
 
-		bool doCtor = myCurInitType != CTOR;
+		bool doCtor = myCurInitType != CTOR || arrInfo.maker.empty();
 		if ( arrInfo.type == "int" || arrInfo.type == "ctl_number_t" )
 			doCtor = false;
 
@@ -2824,8 +2853,8 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 			bool doBrace = false;
 			if ( myCurInitType == ASSIGN )
 			{
-				newlineAndIndent();
-				if ( ! isSubItem || ! doCtor )
+//				newlineAndIndent();
+				if ( isSubItem && !doCtor )
 					curStream() << "{ ";
 				if ( nItems > 1 && nPerCollapseChunk > 1 && ! doCtor )
 					doBrace = true;
@@ -2855,7 +2884,7 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 					if ( lineEveryItem )
 						newlineAndIndent();
 
-					curStream() << arrInfo.maker << "( ";
+					curStream() << (arrInfo.maker.empty() ? arrInfo.type : arrInfo.maker) << "( ";
 					for ( size_t x = 0; x < nPerCollapseChunk; ++x, ++index )
 					{
 						if ( x > 0 )
@@ -2894,7 +2923,7 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 					if ( ! isSubItem || ! doCtor )
 						curStream() << "}";
 				}
-				else if ( ! isSubItem || ! doCtor )
+				else if ( isSubItem && !doCtor )
 					curStream() << " }";
 			}
 		}
@@ -2963,6 +2992,11 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 						   bool isGlobal )
 {
 	InitType retval = ASSIGN;
+    auto byValue = supportsReferences() || !supportsPointers();
+
+    if (isInput && isWritable) {
+        curStream() << "out ";
+    }
 
 	std::string postDecl;
 	switch ( t->cDataType() )
@@ -2995,7 +3029,7 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 		case FloatTypeEnum:
 			if ( isConst )
 				curStream() << getConstLiteral() << ' ';
-			curStream() << "ctl_number_t";
+			curStream() << myModules.front().types[StdType::Float].name;
 			break;
 		case StringTypeEnum:
 			if ( isConst )
@@ -3027,9 +3061,9 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 				for ( size_t i = 0, N = myModules.size(); m == NULL && i != N; ++i )
 				{
 					const ModuleDefinition &curMod = myModules[i];
-					for ( size_t s = 0, S = curMod.types.size(); s != S; ++s )
+					for ( const auto& t : curMod.types )
 					{
-						if ( curMod.types[s].name == structName )
+						if ( t.second.name == structName )
 						{
 							m = curMod.module;
 							break;
@@ -3047,6 +3081,7 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 			const ArrayInfo &arrInfo = collapseArray( t.cast<ArrayType>() );
 
 			retval = ASSIGN;
+            byValue = true;
 
 			if ( myCurModuleUsage && arrInfo.isCore )
 				(*myCurModuleUsage)[NULL].types.insert( arrInfo.type );
@@ -3083,7 +3118,7 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 				postBuf << ']';
 			postDecl = postBuf.str();
 
-			if ( postDecl.empty() && supportsStructOperators() &&
+			if ( postDecl.empty() && supportsStructOperators() && supportsStructConstructors() &&
 				 ( arrInfo.type != "int" && arrInfo.type != "ctl_number_t" ) )
 				retval = CTOR;
 
@@ -3098,10 +3133,16 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 
 	if ( isWritable )
 	{
-		if ( supportsReferences() )
-			curStream() << " &";
-		else
-			curStream() << " *";
+	    if (!byValue) {
+            if (supportsReferences())
+                curStream() << " &";
+            else if (supportsPointers())
+                curStream() << " *";
+        }
+	    else
+        {
+            curStream() << " ";
+        }
 	}
 
 	if ( ! name.empty() )
@@ -3142,6 +3183,7 @@ CCommonLanguage::doInit( InitType initT, CodeLContext &ctxt,
 				curStream() << ';';
 				std::stringstream varAssignB;
 				pushStream( varAssignB );
+
 				if ( ! initV.is_subclass<ValueNode>() )
 				{
 					pushIndent();
@@ -3604,11 +3646,11 @@ CCommonLanguage::collapseArray( const ArrayTypePtr &arrPtr )
 		{
 			if ( asize[0] == 3 )
 			{
-				coreType = "ctl_mat33f_t";
+                coreType = myModules.front().types[StdType::Mat3f].name;
 				if ( supportsStructOperators() )
 					newInfo.maker = coreType;
 				else
-					newInfo.maker = "make_mat33f";
+					newInfo.maker = "";
 			}
 			else
 			{
@@ -3663,11 +3705,11 @@ CCommonLanguage::collapseArray( const ArrayTypePtr &arrPtr )
 					}
 					else
 					{
-						coreType = "ctl_vec3f_t";
+						coreType = myModules.front().types[StdType::Vec3f].name;
 						if ( supportsStructOperators() )
 							maker = coreType;
 						else
-							maker = "make_vec3f";
+							maker = "";
 					}
 					newInfo.isCore = true;
 					asize.back() *= -1;

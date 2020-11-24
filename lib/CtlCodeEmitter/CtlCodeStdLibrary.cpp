@@ -142,6 +142,7 @@ declareMath( SymbolTable &symtab, CodeStdTypes &types )
 	defineSymbol( symtab, types.funcType_f_f(), "log10" );
 	defineSymbol( symtab, types.funcType_f_h(), "log10_h" );
 	defineSymbol( symtab, types.funcType_f_f_f(), "pow" );
+    defineSymbol( symtab, types.funcType_f3_f3_f3(), "pow3" );
 	defineSymbol( symtab, types.funcType_h_h_f(), "pow_h" );
 	defineSymbol( symtab, types.funcType_f_f(), "pow10" );
 	defineSymbol( symtab, types.funcType_h_f(), "pow10_h" );

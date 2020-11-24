@@ -99,6 +99,8 @@ class Interpreter
                            const std::string &moduleSource = "");
 	void        loadFile(const std::string &fileName,
 	                     const std::string &moduleName=std::string());
+    void        loadSource(const char* source,
+                         const std::string &moduleName = std::string());
     bool		moduleIsLoaded (const std::string &moduleName) const;
     
     void setUserModulePath(const std::vector<std::string> path, const bool set);

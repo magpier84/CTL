@@ -65,7 +65,7 @@ public:
 
 protected:
 	virtual void addStandardIncludes( void );
-	virtual void defineStandardTypes( std::vector<TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix );
+//	virtual void defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix );
 	virtual void getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
 
 	virtual bool usesFunctionInitializers( void ) const;

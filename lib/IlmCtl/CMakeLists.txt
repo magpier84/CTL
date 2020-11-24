@@ -1,6 +1,6 @@
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" )
 
-add_library( IlmCtl ${DO_SHARED}
+add_library( IlmCtl STATIC
  CtlAddr.cpp
  CtlAlign.cpp
  CtlExc.cpp
