@@ -435,12 +435,7 @@ Interpreter::loadModuleRecursive (const string &moduleName, const string &fileNa
 	return;
     }
     
-	string realFileName;
-	if(fileName.empty() && !moduleName.empty())
-		realFileName = findModule (moduleName);
-	else
-		realFileName = fileName;
-
+    string realFileName = fileName.empty() ? findModule (moduleName) : fileName;
 
 	_loadModule(moduleName, realFileName, moduleSource);
 }
