@@ -75,10 +75,9 @@ namespace Ctl
 
 
 CodeLContext::CodeLContext( LanguageGenerator &gen,
-							std::istream &file,
 							Module *module,
 							SymbolTable &symtab )
-		: LContext( file, module, symtab ),
+		: LContext( module, symtab ),
 		  _nextParameterAddr( -1 ),
 		  myLanguageGen( gen )
 {

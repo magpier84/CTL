@@ -144,8 +144,8 @@ findTailOfList (const Ptr &head)
 } // namespace
 
 
-Parser::Parser (LContext &lcontext, Interpreter &interpreter):
-    _lex (lcontext),
+Parser::Parser (LContext &lcontext, Interpreter &interpreter, istream &file):
+    _lex (lcontext, file),
     _lcontext (lcontext),
     _interpreter (interpreter),
     _firstConst (0),

@@ -122,8 +122,7 @@ private:
     virtual Module *newModule( const std::string &moduleName,
 							   const std::string &fileName );
 
-    virtual LContext *newLContext( std::istream &file,
-								   Module *module,
+    virtual LContext *newLContext( Module *module,
 								   SymbolTable &symtab ) const;
 
 	Language myLanguage;

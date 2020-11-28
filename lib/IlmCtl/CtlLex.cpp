@@ -147,8 +147,9 @@ getLine (istream &is, string &str)
 } // namespace
 
 
-Lex::Lex (LContext &lcontext):
+Lex::Lex (LContext &lcontext, std::istream &file):
     _lcontext (lcontext),
+    _file(file),
     _currentLine (""),
     _currentChar (0),
     _currentCharIndex (0),
@@ -191,7 +192,7 @@ Lex::nextLine ()
 {
     debug ("Lex::nextLine (this = " << this << ")");
 
-    if (_lcontext.file())
+    if (_file)
     {
 	//
 	// Read the next line, that is, all characters up to
@@ -202,7 +203,7 @@ Lex::nextLine ()
 	_currentChar = 0;
 	_currentCharIndex = 0;
 
-	getLine (_lcontext.file(), _currentLine);
+	getLine (_file, _currentLine);
 
 	if (_currentLine.size() > 0)
 	    _currentChar = _currentLine[0];

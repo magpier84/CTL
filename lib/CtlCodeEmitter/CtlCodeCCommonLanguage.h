@@ -250,6 +250,7 @@ protected:
 	/// @brief return the literal string to tag a value as const
 	virtual const std::string &getConstLiteral( void ) const = 0;
 	virtual void startCast( const char *type ) = 0;
+	void swizzling( int) override {}
 
 	virtual const std::string &beginComment( void ) const = 0;
 	virtual const std::string &beginCommentLine( void ) const = 0;

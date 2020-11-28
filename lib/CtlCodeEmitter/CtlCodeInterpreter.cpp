@@ -210,7 +210,7 @@ CodeInterpreter::initStdLibrary( void )
     //
     CodeModule module( "none", "none" );
 	std::stringstream file;
-    CodeLContext lcontext( *myLanguageGenerator, file, &module, symtab() );
+    CodeLContext lcontext( *myLanguageGenerator, &module, symtab() );
 
     declareCodeStdLibrary( lcontext );
 	myLanguageGenerator->initStdLibrary();
@@ -280,14 +280,14 @@ CodeInterpreter::newFunctionCallInternal( const SymbolInfoPtr info,
 
 
 LContext *
-CodeInterpreter::newLContext( std::istream &file,
-							  Module *module,
+CodeInterpreter::newLContext( Module *module,
 							  SymbolTable &symtab ) const
 {
 	if ( ! myLanguageGenerator )
 		throw std::logic_error( "No Language generator yet" );
 
-    return new CodeLContext( *myLanguageGenerator, file, module, symtab );
+    return new CodeLContext( *myLanguageGenerator, module, symtab );
 }
+
 
 } // namespace Ctl

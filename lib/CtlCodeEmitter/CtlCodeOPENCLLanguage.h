@@ -77,6 +77,7 @@ protected:
     std::string constructNamespaceTag( const std::string &modName ) override;
 
     void startCast( const char *type ) override;
+    void swizzling( int count ) override;
 
     std::string getPrecisionFunctionSuffix( void ) const override;
 

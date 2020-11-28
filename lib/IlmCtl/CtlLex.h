@@ -81,7 +81,7 @@ class Lex
     // is found by querying the ErrorCound object.
     //------------------------------------------------------------
 
-     Lex (LContext &lcontext);
+     Lex (LContext &lcontext, std::istream &file);
 
 
     //-----------------------------------------------------------------
@@ -154,8 +154,9 @@ class Lex
     bool		getStringLiteral ();
     void		badToken (char c);
 
-    LContext &		_lcontext;
-    std::string		_currentLine;
+    LContext &	 _lcontext;
+    std::istream & _file;
+    std::string	_currentLine;
     char		_currentChar;
     int			_currentCharIndex;
     int			_currentLineNumber;

@@ -81,7 +81,7 @@ class Parser
 {
   public:
 
-     Parser (LContext &lcontext, Interpreter &interpreter);
+     Parser (LContext &lcontext, Interpreter &interpreter, std::istream &file);
     ~Parser ();
 
     SyntaxNodePtr	parseInput ();

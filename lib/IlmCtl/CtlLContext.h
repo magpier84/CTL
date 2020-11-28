@@ -95,7 +95,6 @@ class LContext
     // Access to the file that contains the module's source code
     //----------------------------------------------------------
 
-    std::istream &	file ()			{return _file;}
     const std::string &	fileName () const;
 
     //------------------------------------
@@ -296,13 +295,11 @@ class LContext
 				     const ParamVector &parameters) const = 0;
   protected:
 
-    LContext (std::istream &file,
-	      Module *module,
-	      SymbolTable &symtab);
+    LContext (Module *module,
+              SymbolTable &symtab);
 
   private:
 
-    std::istream &	_file;
     Module *		_module;
     SymbolTable &	_symtab;
 

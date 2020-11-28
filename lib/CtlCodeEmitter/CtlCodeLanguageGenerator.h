@@ -136,6 +136,7 @@ public:
 	virtual void startToHalf( void ) = 0;
 	virtual void startToFloat( void ) = 0;
 	virtual void endCoersion( void ) = 0;
+    virtual void swizzling( int count ) = 0;
 
 	virtual void emitToken( Token t ) = 0;
 

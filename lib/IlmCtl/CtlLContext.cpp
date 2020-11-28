@@ -68,8 +68,7 @@ using namespace std;
 namespace Ctl {
 
 
-LContext::LContext (istream &file, Module *module, SymbolTable &symtab):
-    _file (file),
+LContext::LContext (Module *module, SymbolTable &symtab):
     _module (module),
     _symtab (symtab)
 {

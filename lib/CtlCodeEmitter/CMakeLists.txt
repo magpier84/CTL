@@ -29,6 +29,5 @@ target_link_libraries( CtlCodeEmitter IlmCtlMath IlmCtl )
 #  SOVERSION ${CTL_VERSION}
 #)
 
-install( FILES CtlCodeInterpreter.h DESTINATION include/CTL )
-
-install( TARGETS CtlCodeEmitter DESTINATION lib )
+#install( FILES CtlCodeInterpreter.h DESTINATION include/CTL )
+#install( TARGETS CtlCodeEmitter DESTINATION lib )

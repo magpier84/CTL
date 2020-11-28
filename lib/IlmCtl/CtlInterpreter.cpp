@@ -66,6 +66,7 @@
 #include <CtlSymbolTable.h>
 #include <CtlParser.h>
 #include <CtlExc.h>
+#include <CtlSyntaxTree.h>
 #include <IlmThreadMutex.h>
 #include <Iex.h>
 #include <fstream>
@@ -351,8 +352,8 @@ void Interpreter::_loadModule(const std::string &moduleName,
 
 	module = newModule (moduleName, fileName);	
 	_data->moduleSet.addModule (module);
-	lcontext = newLContext (*input, module, _data->symtab);
-	Parser parser (*lcontext, *this);
+	lcontext = newLContext (module, _data->symtab);
+	Parser parser (*lcontext, *this, *input);
 
 	//
 	// Parse the source code and generate executable code
@@ -361,6 +362,7 @@ void Interpreter::_loadModule(const std::string &moduleName,
 
 	debug ("\tparsing input");
 	SyntaxNodePtr syntaxTree = parser.parseInput ();
+//	syntaxTree->printTree();
 
 	if (syntaxTree && lcontext->numErrors() == 0)
 	{
@@ -518,6 +520,13 @@ Interpreter::newFunctionCall (const std::string &functionName)
     }
     
     return newFunctionCallInternal (info, functionName);
+}
+
+LContext* Interpreter::newContext(const std::string &moduleName)
+{
+    auto* module = newModule (moduleName, "");
+    _data->moduleSet.addModule (module);
+    return newLContext (module, _data->symtab);
 }
 
 } // namespace Ctl

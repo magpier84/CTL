@@ -75,7 +75,6 @@ class CodeLContext: public LContext
 {
 public:
     CodeLContext( LanguageGenerator &gen,
-				  std::istream &file,
 				  Module *module,
 				  SymbolTable &symtab );
 

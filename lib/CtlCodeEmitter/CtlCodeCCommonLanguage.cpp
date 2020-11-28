@@ -152,6 +152,8 @@ CCommonLanguage::initStdLibrary( void )
 
     myStdMathFuncs["min"] = "min";
     myStdMathFuncs["max"] = "max";
+    myStdMathFuncs["min3"] = "min";
+    myStdMathFuncs["max3"] = "max";
     myStdMathFuncs["pow3"] = "pow";
 
 	std::string fltconstprefix, fltconstsuff, mathconstsuff;

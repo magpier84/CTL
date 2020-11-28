@@ -112,6 +112,11 @@ class Interpreter
 
    FunctionCallPtr	newFunctionCall (const std::string &functionName);
 
+    //--------------------------------------------------
+    //
+    //--------------------------------------------------
+
+    LContext* newContext(const std::string &moduleName);
 
     //----------------------------------------------------------
     // Get the maximum number of data samples a function call
@@ -190,9 +195,9 @@ class Interpreter
 				     const std::string &fileName) = 0;
 
     virtual LContext *		newLContext
-				    (std::istream &file,
-				     Module *module,
+				    ( Module *module,
 				     SymbolTable &symtab) const = 0;
+
 	void        _loadModule(const std::string &moduleName, 
 	                        const std::string &fileName,
 	                        const std::string &moduleSource = "");

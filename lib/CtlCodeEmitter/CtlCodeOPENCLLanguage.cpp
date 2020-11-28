@@ -85,6 +85,15 @@ void OPENCLGenerator::startCast( const char *type )
     curStream() << type << "( ";
 }
 
+void OPENCLGenerator::swizzling( int count )
+{
+    if (count == 3) {
+        curStream() << ".xyz";
+    } else {
+        assert(false);
+    }
+}
+
 std::string OPENCLGenerator::getPrecisionFunctionSuffix( void ) const
 {
     return "";
@@ -109,7 +118,7 @@ void OPENCLGenerator::getStandardMathBodies( FuncDeclList &d, const std::string 
     d.push_back(
         FunctionDefinition(
             "mult_f3_f33",
-            "vec3 mult_f3_f33( const vec3 a, const mat3 b ) { return a * b; }" ) );
+            "vec3 mult_f3_f33( const vec3 a, const mat3 b ) { return b * a; }" ) );
 
     d.push_back(
         FunctionDefinition(

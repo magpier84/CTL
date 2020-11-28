@@ -29,25 +29,25 @@ set_target_properties( IlmCtl PROPERTIES
   SOVERSION ${CTL_VERSION}
 )
 
-install( FILES
-	CtlAddr.h
-	CtlAlign.h
-	CtlErrors.h
-	CtlExc.h
-	CtlFunctionCall.h
-	CtlInterpreter.h
-	CtlLContext.h
-	CtlMessage.h
-	CtlModule.h
-	CtlRcPtr.h
-	CtlReadWriteAccess.h
-	CtlSymbolTable.h
-	CtlSyntaxTree.h
-	CtlTokens.h
-	CtlType.h
-	CtlTypeStorage.h
-	CtlStdType.h
-	CtlVersion.h
- DESTINATION include/CTL )
-
-install( TARGETS IlmCtl DESTINATION lib )
+#install( FILES
+#	CtlAddr.h
+#	CtlAlign.h
+#	CtlErrors.h
+#	CtlExc.h
+#	CtlFunctionCall.h
+#	CtlInterpreter.h
+#	CtlLContext.h
+#	CtlMessage.h
+#	CtlModule.h
+#	CtlRcPtr.h
+#	CtlReadWriteAccess.h
+#	CtlSymbolTable.h
+#	CtlSyntaxTree.h
+#	CtlTokens.h
+#	CtlType.h
+#	CtlTypeStorage.h
+#	CtlStdType.h
+#	CtlVersion.h
+# DESTINATION include/CTL )
+#
+#install( TARGETS IlmCtl DESTINATION lib )

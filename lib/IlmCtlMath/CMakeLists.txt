@@ -13,13 +13,13 @@ set_target_properties( IlmCtlMath PROPERTIES
   SOVERSION ${CTL_VERSION}
 )
 
-install( FILES
-  CtlColorSpace.h
-  CtlLookupTable.h
-  CtlRbfInterpolator.h
-  CtlSparseMatrix.h
- DESTINATION include/CTL )
-
-install( TARGETS IlmCtlMath DESTINATION lib )
+#install( FILES
+#  CtlColorSpace.h
+#  CtlLookupTable.h
+#  CtlRbfInterpolator.h
+#  CtlSparseMatrix.h
+# DESTINATION include/CTL )
+#
+#install( TARGETS IlmCtlMath DESTINATION lib )
 
 # TODO Add Imath and Iex libadd dependency and version info

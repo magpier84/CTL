@@ -855,8 +855,14 @@ void
 CodeArrayType::generateCastFrom( const ExprNodePtr &expr,
 								 LContext &ctxt ) const
 {
-	expr->generateCode( ctxt );
-	return;
+    expr->generateCode( ctxt );
+
+    if (auto array = expr->type.cast<CodeArrayType>()) {
+        if (array->size() > size()) {
+            CodeLContext &lctxt = static_cast<CodeLContext &>(ctxt);
+            lctxt.generator().swizzling(3);
+        }
+    }
 }
 
 
