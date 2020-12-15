@@ -197,6 +197,17 @@ CodeLContext::newWhileNode( int lineNumber,
 }
 
 
+ForNodePtr
+CodeLContext::newForNode( int lineNumber,
+                          const ExprNodePtr &cond,
+                          const StatementNodePtr &init,
+                          const StatementNodePtr &update,
+                          const StatementNodePtr &loopBody ) const
+{
+    return new CodeForNode( lineNumber, cond, init, update, loopBody );
+}
+
+
 BinaryOpNodePtr
 CodeLContext::newBinaryOpNode( int lineNumber,
 							   Token op,

@@ -522,6 +522,11 @@ Interpreter::newFunctionCall (const std::string &functionName)
     return newFunctionCallInternal (info, functionName);
 }
 
+SymbolInfoPtr Interpreter::getSymbol(const std::string& name)
+{
+    return _data->symtab.lookupSymbol(name);
+}
+
 LContext* Interpreter::newContext(const std::string &moduleName)
 {
     auto* module = newModule (moduleName, "");

@@ -81,10 +81,9 @@ namespace Ctl {
 
 
 SimdLContext::SimdLContext
-    (istream &file,
-     Module *module,
+    (Module *module,
      SymbolTable &symtab):
-    LContext (file, module, symtab)
+    LContext (module, symtab)
 {
     newPath();
     newStackFrame();
@@ -280,6 +279,18 @@ SimdLContext::newWhileNode
      const StatementNodePtr &loopBody) const
 {
     return new SimdWhileNode (lineNumber, condition, loopBody);
+}
+
+
+ForNodePtr
+SimdLContext::newForNode
+    (int lineNumber,
+     const ExprNodePtr&,
+     const StatementNodePtr&,
+     const StatementNodePtr&,
+     const StatementNodePtr&) const
+{
+    return nullptr;
 }
 
 

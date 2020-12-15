@@ -82,7 +82,7 @@ protected:
 	virtual const std::string &getGlobalPrefix( void ) const;
 	virtual const std::string &getBoolTypeName( void ) const;
 	virtual const std::string &getBoolLiteral( bool v ) const;
-	virtual const std::string &getConstLiteral( void ) const;
+	virtual const std::string &getConstLiteral( bool isGlobal ) const;
 	virtual void startCast( const char *type );
 
 	virtual const std::string &beginComment( void ) const;

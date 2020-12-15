@@ -94,8 +94,7 @@ class SimdInterpreter: public Interpreter
 				     const std::string &fileName);
 
     virtual LContext *		newLContext
-				    (std::istream &file,
-				     Module *module,
+				    (Module *module,
 				     SymbolTable &symtab) const;
 
     class Data;

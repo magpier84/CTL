@@ -65,6 +65,7 @@
 #include <CtlSimdStdLibrary.h>
 #include <CtlSimdReg.h>
 #include <CtlSimdFunctionCall.h>
+#include <CtlSimdInst.h>
 #include <IlmThreadMutex.h>
 #include <Iex.h>
 #include <cassert>
@@ -97,7 +98,7 @@ SimdInterpreter::SimdInterpreter():
 
     SimdModule module (*this, "none", "none");
     stringstream file;
-    SimdLContext lcontext (file, &module, symtab());
+    SimdLContext lcontext (&module, symtab());
 
     declareSimdStdLibrary (lcontext);
 }
@@ -157,24 +158,31 @@ SimdInterpreter::newModule
 
 
 FunctionCallPtr
-SimdInterpreter::newFunctionCallInternal 
+SimdInterpreter::newFunctionCallInternal
     (const SymbolInfoPtr info, 
      const string& functionName)
 {
     assert(info);
 
-    return new SimdFunctionCall
-	(*this, functionName, info->type(), info->addr(), symtab());
+    // AddrPtr
+    auto addr = info->addr();
+
+    if (info->addr().is_subclass<SimdCFuncAddr>()) {
+        auto funcAddr = info->addr().cast<SimdCFuncAddr>();
+        addr = new SimdInstAddr(new SimdCCallInst(funcAddr->func(), 2, -1));
+    }
+
+    // SimdInstAddrPtr
+    return new SimdFunctionCall(*this, functionName, info->type(), addr, symtab());
 }
 
 
 LContext *
 SimdInterpreter::newLContext
-    (istream &file,
-     Module *module,
+    (Module *module,
      SymbolTable &symtab) const
 {
-    return new SimdLContext (file, module, symtab);
+    return new SimdLContext (module, symtab);
 }
 
 } // namespace Ctl

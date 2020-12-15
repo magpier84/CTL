@@ -156,6 +156,18 @@ struct CodeWhileNode : public WhileNode
 };
 
 
+struct CodeForNode : public ForNode
+{
+    CodeForNode( int lineNumber,
+                 const ExprNodePtr &cond,
+                 const StatementNodePtr &init,
+                 const StatementNodePtr &update,
+                 const StatementNodePtr &loopBody );
+
+    virtual void generateCode( LContext &lcontext );
+};
+
+
 struct CodeBinaryOpNode : public BinaryOpNode
 {
     CodeBinaryOpNode( int lineNumber,

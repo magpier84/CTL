@@ -192,6 +192,14 @@ class LContext
 				     const StatementNodePtr &loopBody)
 				     const = 0;
 
+    virtual ForNodePtr	    newForNode
+                    (int lineNumber,
+                     const ExprNodePtr &cond,
+                     const StatementNodePtr &init,
+                     const StatementNodePtr &update,
+                     const StatementNodePtr &loopBody)
+                     const = 0;
+
     virtual BinaryOpNodePtr	newBinaryOpNode
 				    (int lineNumber,
 				     Token op,

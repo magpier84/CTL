@@ -101,6 +101,9 @@ typedef RcPtr<ReturnNode> ReturnNodePtr;
 struct WhileNode;
 typedef RcPtr<WhileNode> WhileNodePtr;
 
+struct ForNode;
+typedef RcPtr<ForNode> ForNodePtr;
+
 struct ExprNode;
 typedef RcPtr<ExprNode> ExprNodePtr;
 
@@ -335,6 +338,23 @@ struct WhileNode: public StatementNode
 
     ExprNodePtr		condition;
     StatementNodePtr	loopBody;
+};
+
+struct ForNode: public StatementNode
+{
+    ForNode (int lineNumber,
+             const ExprNodePtr &cond,
+             const StatementNodePtr &init,
+             const StatementNodePtr &update,
+             const StatementNodePtr &loopBody);
+
+    virtual void	print (int indent) const;
+    virtual bool	pathEndsWithReturn () const;
+
+    ExprNodePtr         cond;
+    StatementNodePtr    init;
+    StatementNodePtr    update;
+    StatementNodePtr    loopBody;
 };
 
 

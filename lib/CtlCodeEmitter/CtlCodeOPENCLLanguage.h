@@ -52,6 +52,7 @@
 
 namespace Ctl
 {
+class SimdInterpreter;
 
 // largely the same, init code is different,
 // function keywords added.
@@ -59,21 +60,28 @@ namespace Ctl
 class OPENCLGenerator : public CPPGenerator
 {
 public:
-	OPENCLGenerator( void );
-	virtual ~OPENCLGenerator( void );
+	explicit OPENCLGenerator(SimdInterpreter& simdInterpreter);
+	virtual ~OPENCLGenerator(void );
 
     bool supportsReferences( void ) const { return false; }
-    bool supportsPointers( void ) const { return false; }
-    bool supportsStructOperators( void ) const { return true; }
+    bool supportsPointers( void ) const { return true; }
+    bool supportsStructOperators( void ) const { return false; }
     bool supportsStructConstructors( void ) const { return false; }
+    bool supportsArrayInitializers( void ) const { return true; }
+    bool usesFunctionInitializers( void ) const { return false; }
     bool supportsNamespaces( void ) const { return false; }
     bool supportsHalfType( void ) const { return false; }
+    bool supportsPrint() const { return false; }
 
+    void initStdLibrary( void );
     std::string stdLibraryAndSetup( void ) override { return ""; }
+
+    bool precalculate(const std::string& name, const ExprNodeVector& args) override;
 
 protected:
     const std::string &getFunctionPrefix( void ) const override;
     const std::string &getInlineKeyword( void ) const override;
+    const std::string &getConstLiteral( bool isGlobal ) const override;
     std::string constructNamespaceTag( const std::string &modName ) override;
 
     void startCast( const char *type ) override;
@@ -87,6 +95,9 @@ protected:
     virtual void getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
     virtual void getStandardColorBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
     virtual void getStandardInterpBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+
+private:
+    SimdInterpreter& simdInterpreter;
 };
 
 } // namespace Ctl

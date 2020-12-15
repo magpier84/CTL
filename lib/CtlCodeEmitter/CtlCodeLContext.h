@@ -127,6 +127,12 @@ public:
 										  const ExprNodePtr &condition,
 										  const StatementNodePtr &loopBody ) const;
 
+    virtual ForNodePtr      newForNode( int lineNumber,
+                                        const ExprNodePtr &cond,
+                                        const StatementNodePtr &init,
+                                        const StatementNodePtr &update,
+                                        const StatementNodePtr &loopBody ) const;
+
     virtual BinaryOpNodePtr	newBinaryOpNode( int lineNumber,
 											 Token op,
 											 const ExprNodePtr &leftOperand,
@@ -196,9 +202,14 @@ public:
     virtual FunctionTypePtr	newFunctionType( const DataTypePtr &returnType,
 											 bool returnVarying,
 											 const ParamVector &parameters ) const;
+
+    void setLoop(bool isLoop) { _isLoop = isLoop; }
+    bool isLoop() const { return _isLoop; }
+
 private:
     int			_nextParameterAddr;
 
+    bool _isLoop = false;
     std::vector<DataTypePtr> _locals;
 	mutable std::vector< std::pair<std::string, MemberVector> > myStructDefines;
 

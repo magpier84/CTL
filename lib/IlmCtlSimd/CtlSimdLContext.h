@@ -81,8 +81,7 @@ class SimdLContext: public LContext
 {
   public:
 
-    SimdLContext (std::istream &file,
-		  Module *module,
+    SimdLContext (Module *module,
 		  SymbolTable &symtab);
 
     void		addInst (SimdInst *inst);
@@ -158,6 +157,14 @@ class SimdLContext: public LContext
 				    (int lineNumber,
 				     const ExprNodePtr &condition,
 				     const StatementNodePtr &loopBody) const;
+
+    virtual ForNodePtr	    newForNode
+                  (int lineNumber,
+                   const ExprNodePtr &cond,
+                   const StatementNodePtr &init,
+                   const StatementNodePtr &update,
+                   const StatementNodePtr &loopBody)
+                   const;
 
     virtual BinaryOpNodePtr	newBinaryOpNode
 				    (int lineNumber,

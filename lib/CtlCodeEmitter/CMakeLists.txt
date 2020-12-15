@@ -17,9 +17,8 @@ add_library( CtlCodeEmitter
 	CtlCodeLanguageGenerator.cpp
 	CtlCodeCCommonLanguage.cpp
 	CtlCodeCPPLanguage.cpp
-#	CtlCodeCUDALanguage.cpp
+    CtlCodeGLSLLanguage.cpp
 	CtlCodeOPENCLLanguage.cpp
-#	CtlCodeNukeLanguage.cpp
 )
 
 target_link_libraries( CtlCodeEmitter IlmCtlMath IlmCtl )

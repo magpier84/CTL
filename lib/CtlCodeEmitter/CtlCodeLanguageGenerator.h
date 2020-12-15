@@ -53,6 +53,7 @@
 #include <map>
 
 #include <CtlSymbolTable.h>
+#include <CtlFunctionCall.h>
 #include "CtlCodeSyntaxTree.h"
 
 namespace Ctl
@@ -114,6 +115,7 @@ public:
 	virtual void cond( CodeLContext &ctxt, const CodeIfNode &v ) = 0;
 	virtual void retval( CodeLContext &ctxt, const CodeReturnNode &v ) = 0;
 	virtual void loop( CodeLContext &ctxt, const CodeWhileNode &v ) = 0;
+    virtual void loop( CodeLContext &ctxt, const CodeForNode &v ) = 0;
 	virtual void binaryOp( CodeLContext &ctxt, const CodeBinaryOpNode &v ) = 0;
 	virtual void unaryOp( CodeLContext &ctxt, const CodeUnaryOpNode &v ) = 0;
 	virtual void index( CodeLContext &ctxt, const CodeArrayIndexNode &v ) = 0;
@@ -139,6 +141,8 @@ public:
     virtual void swizzling( int count ) = 0;
 
 	virtual void emitToken( Token t ) = 0;
+
+    virtual bool precalculate( const std::string&, const ExprNodeVector&) { return false; }
 
 protected:
 

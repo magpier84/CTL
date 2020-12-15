@@ -75,6 +75,8 @@ public:
 
     virtual void print( int indent ) const;
 
+    int getOffset() const { return _fpOffset; }
+
 private:
 	int _fpOffset;
 };

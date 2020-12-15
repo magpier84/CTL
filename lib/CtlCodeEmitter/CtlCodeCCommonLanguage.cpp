@@ -170,7 +170,8 @@ CCommonLanguage::initStdLibrary( void )
 	myStdNames["FLT_EPSILON"] = fltconstprefix + "_EPSILON";
 	myStdNames["FLT_POS_INF"] = "HUGE_VAL" + fltconstsuff;
 	myStdNames["FLT_NEG_INF"] = "(-HUGE_VAL" + fltconstsuff + ")";
-	myStdNames["FLT_NAN"] = "__builtin_nan" + precSuffix + "(\"\")";
+//	myStdNames["FLT_NAN"] = "__builtin_nan" + precSuffix + "(\"\")";
+    myStdNames["FLT_NAN"] = "NAN";
 
 	myStdNames["HALF_MAX"] = "HALF_MAX";
 	myStdNames["HALF_MIN"] = "HALF_MIN";
@@ -210,7 +211,12 @@ CCommonLanguage::addStandardIncludes( void )
 void
 CCommonLanguage::initStandardLibraryBodies( ModuleDefinition &stdMod )
 {
-	std::string funcPref = getFunctionPrefix() + " " + getInlineKeyword() + "\n";
+	std::string funcPref = getFunctionPrefix();
+	if (!funcPref.empty())
+	    funcPref += " ";
+	funcPref += getInlineKeyword();
+	funcPref += " ";
+
 	std::string precSuffix = getPrecisionFunctionSuffix();
 
 	defineStandardTypes( stdMod.types, funcPref, precSuffix );
@@ -475,7 +481,7 @@ CCommonLanguage::getStandardMathBodies( FuncDeclList &d, const std::string &func
 	d.push_back( FunctionDefinition( "invert_f33", funcPref +
 "ctl_mat33f_t invert_f33( " + argmattype33 + "a )\n"
 "{\n"
-"    ctl_mat33f_t r;\n"
+"    ctl_mat33f_t r = {{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}};\n"
 "    ctl_number_t det = a.vals[0][0] * a.vals[1][1] * a.vals[2][2] + a.vals[0][1] * a.vals[1][2] * a.vals[2][0] + a.vals[0][2] * a.vals[1][0] * a.vals[2][1] - a.vals[2][0] * a.vals[1][1] * a.vals[0][2] - a.vals[2][1] * a.vals[1][2] * a.vals[0][0] - a.vals[2][2] * a.vals[1][0] * a.vals[0][1];\n"
 "    if ( fabs" + precSuffix + "( det ) > " + myStdNames["FLT_EPSILON"] + " )\n"
 "    {\n"
@@ -629,7 +635,8 @@ CCommonLanguage::getStandardMathBodies( FuncDeclList &d, const std::string &func
 	d.push_back( FunctionDefinition( "invert_f44", funcPref +
 "ctl_mat44f_t invert_f44( " + argmattype44 + "a )\n"
 "{\n"
-"    ctl_mat44f_t s, t;\n"
+"    ctl_mat44f_t s = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};\n"
+"    ctl_mat44f_t t = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};\n"
 "    int i, j, k;\n"
 "    for ( i = 0; i < 4; ++i )\n"
 "        for ( j = 0; j < 4; ++j )\n"
@@ -776,6 +783,19 @@ CCommonLanguage::getStandardPrintBodies( FuncDeclList &d, const std::string &fun
 
 ////////////////////////////////////////
 
+namespace
+{
+std::string replace_all(std::string& text, const std::string& from, const std::string& to)
+{
+    size_t start_pos = 0;
+    while ((start_pos = text.find(from, start_pos)) != std::string::npos)
+    {
+        text.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return text;
+}
+}
 
 void
 CCommonLanguage::getStandardColorBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix )
@@ -788,6 +808,10 @@ CCommonLanguage::getStandardColorBodies( FuncDeclList &d, const std::string &fun
 		argvectype3 = "const ctl_vec3f_t &";
 		argchrom = "const Chromaticities &";
 		argmat44 = "const ctl_mat44f_t &";
+	}
+	else if ( supportsPointers() )
+	{
+        argchrom = "const Chromaticities *";
 	}
 
 	// These are a straight crib from IlmCtlSimd for the luv routines
@@ -810,7 +834,7 @@ CCommonLanguage::getStandardColorBodies( FuncDeclList &d, const std::string &fun
 "    ctl_number_t Sr = (X * (chroma.blue.y - chroma.green.y) - chroma.green.x * (Y * (chroma.blue.y - one) + chroma.blue.y * (X + Z)) + chroma.blue.x * (Y * (chroma.green.y - one) + chroma.green.y * (X + Z))) / d;\n"
 "    ctl_number_t Sg = (X * (chroma.red.y - chroma.blue.y) + chroma.red.x * (Y * (chroma.blue.y - one) + chroma.blue.y * (X + Z)) - chroma.blue.x * (Y * (chroma.red.y - one) + chroma.red.y * (X + Z))) / d;\n"
 "    ctl_number_t Sb = (X * (chroma.green.y - chroma.red.y) - chroma.red.x * (Y * (chroma.green.y - one) + chroma.green.y * (X + Z)) + chroma.green.x * (Y * (chroma.red.y - one) + chroma.red.y * (X + Z))) / d;\n"
-"    ctl_mat44f_t M;\n"
+"    ctl_mat44f_t M = {{{1, 0, 0, 0,}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};\n"
 "    M.vals[0][0] = Sr * chroma.red.x;\n"
 "    M.vals[0][1] = Sr * chroma.red.y;\n"
 "    M.vals[0][2] = Sr * (1 - chroma.red.x - chroma.red.y);\n"
@@ -822,6 +846,10 @@ CCommonLanguage::getStandardColorBodies( FuncDeclList &d, const std::string &fun
 "    M.vals[2][2] = Sb * (1 - chroma.blue.x - chroma.blue.y);\n"
 "    return M;\n"
 "}" ) );
+
+	if (!supportsReferences() && supportsPointers()) {
+        replace_all(d.back().body, "chroma.", "chroma->");
+	}
 	d.back().moduleUsage[NULL].types.insert( "ctl_mat44f_t" );
 	d.back().moduleUsage[NULL].types.insert( "Chromaticities" );
 
@@ -852,11 +880,11 @@ CCommonLanguage::getStandardColorBodies( FuncDeclList &d, const std::string &fun
 "    ctl_vec3f_t r;\n"
 "    ctl_number_t unprime = _cspace_uprime( XYZn );\n"
 "    ctl_number_t vnprime = _cspace_vprime( XYZn );\n"
-"    ctl_number_t fY = (Luv.x + ctl_number_t(16)) / ctl_number_t(116);\n"
+"    ctl_number_t fY = (Luv.x + 16.0) / 116.0;\n"
 "    r.y = XYZn.y * _cspace_fInverse( fY );\n"
-"    ctl_number_t d = ctl_number_t(4) * (ctl_number_t(13) * Luv.x * vnprime + Luv.z);\n"
-"    r.x = ctl_number_t(9) * (ctl_number_t(13) * Luv.x * unprime + Luv.y) * r.y / d;\n"
-"    r.z = -( ctl_number_t(3) * Luv.y + ctl_number_t(13) * Luv.x * ( ctl_number_t(-12) + ctl_number_t(3) * unprime + ctl_number_t(20) * vnprime ) + ctl_number_t(20) * Luv.z ) * r.y / d;\n"
+"    ctl_number_t d = 4.0 * (13.0 * Luv.x * vnprime + Luv.z);\n"
+"    r.x = 9.0 * (13.0 * Luv.x * unprime + Luv.y) * r.y / d;\n"
+"    r.z = -( 3.0 * Luv.y + 13.0 * Luv.x * ( -12.0 + 3.0 * unprime + 20.0 * vnprime ) + 20.0 * Luv.z ) * r.y / d;\n"
 "    return r;\n"
 "}" ) );
 	d.back().moduleUsage[NULL].types.insert( "ctl_vec3f_t" );
@@ -924,7 +952,7 @@ CCommonLanguage::getStandardInterpBodies( FuncDeclList &d, const std::string &fu
 	d.back().moduleUsage[NULL].functions.insert( "_lerp" );
 
 	d.push_back( FunctionDefinition( "lookupCubic1D", funcPref +
-"ctl_number_t lookup1D( ctl_number_t table[], int size, ctl_number_t pMin, ctl_number_t pMax, ctl_number_t p )\n"
+"ctl_number_t lookupCubic1D( const ctl_number_t table[], int size, ctl_number_t pMin, ctl_number_t pMax, ctl_number_t p )\n"
 "{\n"
 "    if ( size < 3 ) return lookup1D( table, size, pMin, pMax, p );\n"
 "    int iMax = size - 1;\n"
@@ -1048,20 +1076,15 @@ CCommonLanguage::getStandardInterpBodies( FuncDeclList &d, const std::string &fu
 	d.push_back( FunctionDefinition( "interpolate1D", funcPref +
 "ctl_number_t interpolate1D( const ctl_number_t table[][2], int size, ctl_number_t p )\n"
 "{\n"
-"    if ( size < 1 ) return (ctl_number_t)(0);\n"
-"    if ( p < table[0][0] ) return table[0][1];\n"
-"    if ( p >= table[size - 1][0] ) return table[size - 1][1];\n"
-"    int i = 0;\n"
-"    int j = size;\n"
-"    while ( i < j - 1 )\n"
-"    {\n"
-"        int k = ( i + j ) / 2;\n"
-"        if ( table[k][0] == p ) return table[k][1];\n"
-"        else if ( table[k][0] < p ) i = k;\n"
-"        else j = k;\n"
+"    if (size < 1) return (ctl_number_t)(0);\n"
+"    if (p < table[0][0]) return table[0][1];\n"
+"    if (p >= table[size - 1][0]) return table[size - 1][1];\n"
+"    for (int i = 0; i < size - 1; i = i + 1 ) {\n"
+"       if (table[i][0] <= p && p < table[i + 1][0]) {\n"
+"           float s = (p - table[i][0]) / (table[i + 1][0] - table[i][0]);\n"
+"           return table[i][1] * (1.0 - s) + table[i + 1][1] * s;\n"
+"       }\n"
 "    }\n"
-"    ctl_number_t t = ( p - table[i][0] ) / ( table[i + 1][0] - table[i][0] );\n"
-"    return _lerp( table[i][1], table[i + 1][1], t );\n"
 "}" ) );
 	d.back().moduleUsage[NULL].functions.insert( "_lerp" );
 
@@ -1759,7 +1782,7 @@ CCommonLanguage::module( CodeLContext &ctxt, const CodeModuleNode &m )
 				curStream() << ';';
 			}
 			popBlock();
-			curStream() << ' ' << myModPrefix << curDef.name << ";\n";
+			curStream() << ' ' << /*myModPrefix <<*/ curDef.name << ";\n";
 			popStream();
 			curDef.declare = curStruct.str();
 			myCurModuleUsage = curUsage;
@@ -2020,6 +2043,10 @@ bool CCommonLanguage::isConstExpr(const ExprNodePtr& expr) const
             }
         }
     }
+    else if (expr.is_subclass<CodeArrayIndexNode>()) {
+//        const auto indexNode = expr.cast<CodeArrayIndexNode>();
+        return false;
+    }
     return true;
 }
 
@@ -2059,6 +2086,10 @@ CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
 		const std::string &pref = getGlobalPrefix();
 		if ( ! pref.empty() )
 			curStream() << pref << ' ';
+		if (v.name == "CONE_RESP_MAT_BRADFORD") {
+		    int a = 0;
+            (void)a;
+		}
 		InitType initT = variable( ctxt, v.name, v.info->type(),
 								   doConst, false, false, true );
 
@@ -2096,10 +2127,20 @@ CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
 		}
 		else
 		{
+//		    if (v.initialValue.is_subclass<CodeCallNode>()) {
+//		        auto callNode = v.initialValue.cast<CodeCallNode>();
+//                precalculate(callNode->function->name, callNode->arguments);
+//		    }
 			myGlobalInitType[v.name] = initT;
 			myGlobalVariables.insert( v.name );
-			globDef.delayedInit = doInit( initT, ctxt, v.info->type(),
-										  v.initialValue, v.name );
+			if (v.name == "CINEMA_BLACK") {
+			    int a = 0;
+                (void)a;
+			}
+			const auto precalculated = !isConstExpr(v.initialValue) && precalculate(v.name, {});
+            if (!precalculated) {
+                globDef.delayedInit = doInit(initT, ctxt, v.info->type(), v.initialValue, v.name);
+            }
 			popStream();
 			globDef.declare = varDeclB.str();
 		}
@@ -2112,7 +2153,13 @@ CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
 	}
 	else
 	{
-		newlineAndIndent();
+	    if (v.name == "minTable") {
+	        int a = 0;
+            (void)a;
+	    }
+	    if (!ctxt.isLoop()) {
+            newlineAndIndent();
+        }
 		InitType initT = variable( ctxt, v.name, v.info->type(),
 								   ! v.info->isWritable() && isConstExpr(v.initialValue), false, false, false );
 
@@ -2130,11 +2177,15 @@ CCommonLanguage::variable( CodeLContext &ctxt, const CodeVariableNode &v )
 void
 CCommonLanguage::assignment( CodeLContext &ctxt, const CodeAssignmentNode &v )
 {
-	newlineAndIndent();
+    if (!ctxt.isLoop()) {
+        newlineAndIndent();
+    }
 	v.lhs->generateCode( ctxt );
 	curStream() << " = ";
 	v.lhs->type->generateCastFrom( v.rhs, ctxt );
-	curStream() << ';';
+	if (!ctxt.isLoop()) {
+        curStream() << ';';
+    }
 }
 
 
@@ -2260,6 +2311,33 @@ CCommonLanguage::loop( CodeLContext &ctxt, const CodeWhileNode &v )
 
 
 void
+CCommonLanguage::loop( CodeLContext &ctxt, const CodeForNode &v )
+{
+    newlineAndIndent();
+    ctxt.setLoop(true);
+    curStream() << "for ( ";
+    v.init->generateCode(ctxt);
+    curStream() << " ";
+    BoolTypePtr boolType = ctxt.newBoolType();
+    boolType->generateCastFrom( v.cond, ctxt );
+    curStream() << "; ";
+    v.update->generateCode(ctxt);
+    curStream() << " )";
+    ctxt.setLoop(false);
+    pushBlock();
+    StatementNodePtr body = v.loopBody;
+    while ( body )
+    {
+        body->generateCode( ctxt );
+        body = body->next;
+    }
+    popBlock();
+}
+
+
+////////////////////////////////////////
+
+void
 CCommonLanguage::binaryOp( CodeLContext &ctxt, const CodeBinaryOpNode &v )
 {
 	// operator precedence in CTL is same as C++, but we will have
@@ -2323,7 +2401,7 @@ CCommonLanguage::index( CodeLContext &ctxt, const CodeArrayIndexNode &v )
 
 	const ArrayInfo &arrInfo = collapseArray( root->type.cast<ArrayType>() );
 	root->generateCode( ctxt );
-	if ( arrInfo.isCore && ! supportsStructOperators() )
+	if ( !arrInfo.isCore && arrInfo.sizes.size() > 1 && !supportsStructOperators() )
 		curStream() << ".vals";
 
 	curStream() << '[';
@@ -2383,8 +2461,18 @@ CCommonLanguage::index( CodeLContext &ctxt, const CodeArrayIndexNode &v )
 void
 CCommonLanguage::member( CodeLContext &ctxt, const CodeMemberNode &v )
 {
+    std::string access(".");
 	v.obj->generateCode( ctxt );
-	curStream() << '.' << v.member;
+	if (supportsPointers() && v.obj.is_subclass<CodeNameNode>())
+    {
+	    auto nameNode = v.obj.cast<CodeNameNode>();
+        const auto& dataAddr = nameNode->info->addr().cast<CodeDataAddr>();
+        // Function argument
+	    if (dataAddr->getOffset() < 0) {
+            access = "->";
+        }
+    }
+	curStream() << access << v.member;
 }
 
 
@@ -2407,6 +2495,12 @@ CCommonLanguage::size( CodeLContext &ctxt, const CodeSizeNode &v )
 void
 CCommonLanguage::name( CodeLContext &ctxt, const CodeNameNode &v )
 {
+    if (v.name.find("white") != std::string::npos)
+    {
+        int a = 0;
+        (void)a;
+    }
+
 	std::map<std::string, std::string>::const_iterator i = myGlobalLiterals.find( v.name );
 
 	if ( i != myGlobalLiterals.end() )
@@ -2567,13 +2661,29 @@ isStdPrintFunction( const std::string &n )
 void
 CCommonLanguage::call( CodeLContext &ctxt, const CodeCallNode &v )
 {
-	std::string baseFuncName = removeNSQuals( v.function->name );
-	bool isPrint = isStdPrintFunction( baseFuncName );
+    if (v.function->name == "interpolate1D") {
+        int a = 0;
+        (void)a;
+    }
+//	std::string baseFuncName = removeNSQuals( v.function->name );
+	bool isPrint = isStdPrintFunction( v.function->name );
 
-	if ( isPrint )
-		newlineAndIndent();
+	if ( isPrint ) {
+	    if (v.function->name == "::print_float") {
+            newlineAndIndent();
+	    }
+	    else if (!supportsPrint()) {
+            curStream() << "// ";
+            isPrint = false;
+	    } else {
+            newlineAndIndent();
+	    }
+    }
+	else if (v.function->name.find("assert") != std::string::npos) {
+        curStream() << "// ";
+	}
 
-	bool needAddress = ! supportsReferences();
+	bool needAddress = !supportsReferences() && supportsPointers();
 	v.function->generateCode( ctxt );
 	if ( v.arguments.empty() )
 		curStream() << "()";
@@ -2596,7 +2706,14 @@ CCommonLanguage::call( CodeLContext &ctxt, const CodeCallNode &v )
 			if ( i > 0 )
 				curStream() << ", ";
 
-			if ( needAddress && parameters[i].access != RWA_READ )
+			auto isStructVar = false;
+			if (v.arguments[i].is_subclass<NameNode>()) {
+			    const auto& nameNode = v.arguments[i].cast<NameNode>();
+			    const auto& dataAddr = nameNode->info->addr().cast<CodeDataAddr>();
+                isStructVar = parameters[i].type.is_subclass<StructType>() && dataAddr->getOffset() >= 0;
+			}
+
+			if ( needAddress && (parameters[i].access != RWA_READ || isStructVar) )
 			{
 				curStream() << "&";
 			}
@@ -2793,13 +2910,44 @@ CCommonLanguage::emitToken( Token t )
 
 ////////////////////////////////////////
 
+void CCommonLanguage::initArrayRecurse( CodeLContext &ctxt,
+                                        const std::vector<int> &dimensions,
+                                        const ExprNodeVector &elements,
+                                        size_t dimIndex,
+                                        size_t &index)
+{
+    curStream() << "{";
+    if (dimIndex + 1 < dimensions.size()) {
+        for (auto i = 0u; i < std::abs(dimensions[dimIndex]); ++i) {
+            if (i > 0) {
+                curStream() << ", ";
+            }
+            initArrayRecurse(ctxt, dimensions, elements, dimIndex + 1, index);
+        }
+    } else {
+        for (auto i = 0u; i < std::abs(dimensions[dimIndex]); ++i) {
+            if (i > 0) {
+                curStream() << ", ";
+            }
+            const auto& elem = elements[index];
+            valueRecurse( ctxt, elements, elem->type, index, "", true );
+        }
+    }
+    curStream() << "}";
+}
 
 void
-CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &elements,
-							const DataTypePtr &t, size_t &index,
-							const std::string &varName,
-							bool isSubItem )
+CCommonLanguage::valueRecurse( CodeLContext &ctxt,
+                               const ExprNodeVector &elements,
+							   const DataTypePtr &t,
+							   size_t &index,
+							   const std::string &varName,
+							   bool isSubItem )
 {
+    if (varName == "minTable") {
+        int a = 0;
+        (void)a;
+    }
 	ArrayType *arrayType = dynamic_cast<ArrayType *>( t.pointer() );
 	if ( arrayType )
 	{
@@ -2852,13 +3000,26 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 		}
 		else
 		{
+		    if ( myCurInitType == INIT )
+		    {
+		        // Core type should not be a structure
+		        if (!arrInfo.isCore) {
+                    curStream() << "{";
+                }
+                initArrayRecurse(ctxt, arr_sizes, elements, 0, index);
+		        if (!arrInfo.isCore) {
+                    curStream() << "}";
+                }
+
+                return;
+		    }
+
 			bool doBrace = false;
 			if ( myCurInitType == ASSIGN )
 			{
-//				newlineAndIndent();
-				if ( isSubItem && !doCtor )
+				if ( isSubItem || !doCtor )
 					curStream() << "{ ";
-				if ( nItems > 1 && nPerCollapseChunk > 1 && ! doCtor )
+				if ( nItems > 1 && nPerCollapseChunk > 1 && !doCtor )
 					doBrace = true;
 			}
 			pushIndent();
@@ -2886,7 +3047,10 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 					if ( lineEveryItem )
 						newlineAndIndent();
 
-					curStream() << (arrInfo.maker.empty() ? arrInfo.type : arrInfo.maker) << "( ";
+					const std::string maker = arrInfo.maker.empty() ? arrInfo.type : arrInfo.maker/*!doBrace ? arrInfo.maker : ""*/;
+					if (!maker.empty()) {
+                        curStream() << maker << "( ";
+                    }
 					for ( size_t x = 0; x < nPerCollapseChunk; ++x, ++index )
 					{
 						if ( x > 0 )
@@ -2894,7 +3058,9 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 					
 						coreType->generateCastFrom( elements[index], ctxt );
 					}
-					curStream() << " )";
+                    if (!maker.empty()) {
+                        curStream() << " )";
+                    }
 				}
 				else
 				{
@@ -2922,10 +3088,10 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 				if ( lineEveryItem )
 				{
 					newlineAndIndent();
-					if ( ! isSubItem || ! doCtor )
+					if ( isSubItem || !doCtor )
 						curStream() << "}";
 				}
-				else if ( isSubItem && !doCtor )
+				else if ( isSubItem || !doCtor )
 					curStream() << " }";
 			}
 		}
@@ -2936,8 +3102,9 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 	StructType *structType = dynamic_cast<StructType *>( t.pointer() );
 	if ( structType )
 	{
-		if ( myCurInitType == ASSIGN )
-			curStream() << '{';
+		if ( myCurInitType == ASSIGN ) {
+            curStream() << '{';
+        }
 
 		if ( myCurInitType == FUNC )
 		{
@@ -2952,12 +3119,15 @@ CCommonLanguage::valueRecurse( CodeLContext &ctxt, const ExprNodeVector &element
 		else
 		{
 			pushIndent();
+            newlineAndIndent();
 			for ( MemberVectorConstIterator it = structType->members().begin();
 				 it != structType->members().end();
 				 ++it )
 			{
-				if ( it != structType->members().begin() )
-					curStream() << ", ";
+				if ( it != structType->members().begin() ) {
+                    curStream() << ",";
+                    newlineAndIndent();
+                }
 
 				valueRecurse( ctxt, elements, it->type, index, varName, true );
 			}
@@ -2993,6 +3163,10 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 						   bool isConst, bool isInput, bool isWritable,
 						   bool isGlobal )
 {
+    if (name.find("white") != std::string::npos) {
+        int a = 0;
+        (void)a;
+    }
 	InitType retval = ASSIGN;
     auto byValue = supportsReferences() || !supportsPointers();
 
@@ -3008,29 +3182,29 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 			break;
 		case BoolTypeEnum:
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 			curStream() << "bool";
 			break;
 		case IntTypeEnum:
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 			curStream() << "int";
 			break;
 		case UIntTypeEnum:
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 			curStream() << "unsigned int";
 			break;
 		case HalfTypeEnum:
 			if ( ! supportsHalfType() )
 				throw std::logic_error( "Language does not support the half type" );
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 			curStream() << "half";
 			break;
 		case FloatTypeEnum:
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 			curStream() << myModules.front().types[StdType::Float].name;
 			break;
 		case StringTypeEnum:
@@ -3049,7 +3223,7 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 				retval = ASSIGN;
 
 			if ( retval == ASSIGN && isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 
 			std::string structName = removeNSQuals( structType->name() );
 			if ( myCurModuleUsage )
@@ -3080,7 +3254,13 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 		}
 		case ArrayTypeEnum:
 		{
+		    if (name == "minTable") {
+		        int a = 0;
+                (void)a;
+		    }
 			const ArrayInfo &arrInfo = collapseArray( t.cast<ArrayType>() );
+
+		    const auto supportsNDimArrays = true;
 
 			retval = ASSIGN;
             byValue = true;
@@ -3095,16 +3275,26 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 			{
 				int sz = arrInfo.sizes[i];
 				// built-in vec / matrix set size to negative in collapse
-				if ( sz < 0 )
-					break;
+                if (supportsArrayInitializers()) {
+                    retval = INIT;
+                }
+				if ( sz < 0 ) {
+//				    if (supportsArrayInitializers() && !arrInfo.isCore) {
+//				        retval = INIT;
+//				    }
+                    break;
+                }
 
 				if ( needOpen )
 				{
 					postBuf << '[';
 					needOpen = false;
 				}
-				if ( sz == 0 )
+				if ( sz == 0 || (supportsNDimArrays && arrInfo.sizes.size() > 1))
 				{
+				    if ( sz > 0 ) {
+				        postBuf << sz;
+				    }
 					postBuf << ']';
 					needOpen = true;
 					mulCnt = 0;
@@ -3125,7 +3315,7 @@ CCommonLanguage::variable( CodeLContext &ctxt,
 				retval = CTOR;
 
 			if ( isConst )
-				curStream() << getConstLiteral() << ' ';
+				curStream() << getConstLiteral(isGlobal) << ' ';
 
 			curStream() << arrInfo.type;
 			isWritable = ( isInput || isWritable ) && postDecl.empty();
@@ -3169,6 +3359,10 @@ CCommonLanguage::doInit( InitType initT, CodeLContext &ctxt,
 						 const DataTypePtr &t,
 						 const ExprNodePtr &initV, const std::string &varName )
 {
+    if (varName == "ARRI_ALEXA_WG_PRI") {
+        int a = 0;
+        (void)a;
+    }
 	std::string delayedInit;
 	myCurInitType = initT;
 	if ( initV )
@@ -3213,6 +3407,7 @@ CCommonLanguage::doInit( InitType initT, CodeLContext &ctxt,
 				break;
 			}
 			case ASSIGN:
+			case INIT:
 				curStream() << " = ";
 				initV->generateCode( ctxt );
 				curStream() << ";";
@@ -3649,23 +3844,32 @@ CCommonLanguage::collapseArray( const ArrayTypePtr &arrPtr )
 			if ( asize[0] == 3 )
 			{
                 coreType = myModules.front().types[StdType::Mat3f].name;
-				if ( supportsStructOperators() )
-					newInfo.maker = coreType;
-				else
-					newInfo.maker = "";
+				if ( supportsStructOperators() ) {
+                    newInfo.maker = coreType;
+                    newInfo.isCore = true;
+                }
+				else {
+                    newInfo.maker = "make_mat33f";
+                }
 			}
 			else
 			{
-				coreType = "ctl_mat44f_t";
-				if ( supportsStructOperators() )
-					newInfo.maker = coreType;
+				coreType = myModules.front().types[StdType::Mat4f].name;
+				if ( supportsStructOperators() ) {
+                    newInfo.maker = coreType;
+                    newInfo.isCore = true;
+                }
 				else
 					newInfo.maker = "make_mat44f";
 			}
-			newInfo.isCore = true;
 			asize[0] = -asize[0];
 			asize[1] = -asize[1];
 		}
+		else if ( asize.size() > 1 )
+        {
+		    // Should initialize without structure braces {}
+            newInfo.isCore = true;
+        }
 		else if ( asize.size() == 1 )
 		{
 			std::string &maker = newInfo.maker;
@@ -3674,68 +3878,32 @@ CCommonLanguage::collapseArray( const ArrayTypePtr &arrPtr )
 			// than clang++ but 3+ minutes for clang to compile and I never
 			// could wait for g++ to finish a -O3 build...
 			// so let's just do giant number table in those scenarios
+			const auto setArrayInfo = [&](StdType type) {
+                const auto& typeInfo = myModules.front().types[type];
+                if ( !supportsStructConstructors() ) {
+                    maker = typeInfo.maker;
+                } else {
+                    maker = coreType;
+                }
+                newInfo.isCore = true;
+                coreType = typeInfo.name;
+                asize.back() *= -1;
+			};
+
 			switch ( asize.back() )
 			{
 				case 2:
-					if ( coreType == "int" )
-					{
-						coreType = "ctl_vec2i_t";
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "make_vec2i";
-					}
-					else
-					{
-						coreType = "ctl_vec2f_t";
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "make_vec2f";
-					}
-					newInfo.isCore = true;
-					asize.back() *= -1;
+                    setArrayInfo(coreType == "int" ? StdType::Vec2i : StdType::Vec2f);
 					break;
 				case 3:
-					if ( coreType == "int" )
-					{
-						coreType = "ctl_vec3i_t";
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "make_vec3i";
-					}
-					else
-					{
-						coreType = myModules.front().types[StdType::Vec3f].name;
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "";
-					}
-					newInfo.isCore = true;
-					asize.back() *= -1;
+                    setArrayInfo(coreType == "int" ? StdType::Vec3i : StdType::Vec3f);
 					break;
 				case 4:
-					if ( coreType == "int" )
-					{
-						coreType = "ctl_vec4i_t";
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "make_vec4i";
-					}
-					else
-					{
-						coreType = "ctl_vec4f_t";
-						if ( supportsStructOperators() )
-							maker = coreType;
-						else
-							maker = "make_vec4f";
-					}
-					newInfo.isCore = true;
-					asize.back() *= -1;
+                    setArrayInfo(coreType == "int" ? StdType::Vec4i : StdType::Vec4f);
 					break;
+                case 8:
+                    setArrayInfo(coreType == "int" ? StdType::Vec8i : StdType::Vec8f);
+                    break;
 				default:
 					break;
 			}

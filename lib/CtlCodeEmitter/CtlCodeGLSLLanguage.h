@@ -45,101 +45,51 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
+#ifndef INCLUDED_CTL_CODE_GLSL_LANGUAGE_H
+#define INCLUDED_CTL_CODE_GLSL_LANGUAGE_H
 
-#ifndef INCLUDED_CTL_CODE_INTERPRETER_H
-#define INCLUDED_CTL_CODE_INTERPRETER_H
-
-//-----------------------------------------------------------------------------
-//
-//	class CodeInterpreter
-//
-//	A CTL interpreter that doesn't interpret anything, but can emit source code
-//
-//-----------------------------------------------------------------------------
-
-#include <CtlInterpreter.h>
-#include <IlmCtlSimd/CtlSimdInterpreter.h>
-
-#include "CtlCodeLanguageGenerator.h"
-
-#include <sstream>
+#include "CtlCodeCPPLanguage.h"
 
 namespace Ctl
 {
 
-class CodeInterpreter: protected Interpreter
+// largely the same, init code is different,
+// function keywords added.
+// Boiler plate for launching kernels different
+class GLSLGenerator : public CPPGenerator
 {
 public:
-	enum Language
-	{
-		C89,
-		C99,
-		CPP03,
-		CPP11,
-		OPENCL,
-		CUDA,
-		GLSL,
-		NUKE
-	};
+	GLSLGenerator(void );
+	virtual ~GLSLGenerator(void );
 
-    CodeInterpreter( void );
-    virtual ~CodeInterpreter( void );
+    bool supportsReferences( void ) const { return false; }
+    bool supportsPointers( void ) const { return false; }
+    bool supportsStructOperators( void ) const { return true; }
+    bool supportsStructConstructors( void ) const { return false; }
+    bool supportsNamespaces( void ) const { return false; }
+    bool supportsHalfType( void ) const { return false; }
+    bool supportsPrint() const { return false; }
 
-    virtual size_t maxSamples( void ) const;
+    std::string stdLibraryAndSetup( void ) override { return ""; }
 
-    virtual void setMaxInstCount( unsigned long count );
-    virtual void abortAllPrograms();
+protected:
+    const std::string &getFunctionPrefix( void ) const override;
+    const std::string &getInlineKeyword( void ) const override;
+    std::string constructNamespaceTag( const std::string &modName ) override;
 
-	Language getLanguage( void ) const { return myLanguage; }
-	void setLanguage( Language l );
-	bool isDriverEnabledForLanguage( void ) const;
-	void setPrecision( LanguageGenerator::Precision p );
+    void startCast( const char *type ) override;
+    void swizzling( int count ) override;
 
-	// NB: Must be called after the language has been
-	// set but before any modules are loaded such that
-	// the correct code is generated and so the types
-	// are available to the parser in the symbol table
-	void initStdLibrary( void );
+    std::string getPrecisionFunctionSuffix( void ) const override;
 
-    void loadModule(const std::string &moduleName,
-                    const std::string &fileName = "",
-                    const std::string &moduleSource = "");
-
-    void loadSource(const char* source,
-                    const std::string &moduleName = std::string());
-
-	// if set to true, set the interpreter to only emit functions that
-	// are called from the 'main' routine(s)
-	inline void setCalledOnly( bool on_off ) { myCalledOnly = on_off; }
-	inline bool isCalledOnly( void ) const { return myCalledOnly; }
-
-	// emits function definitions suitable for
-	// compiling the generated code into a library
-	// if appropriate for the language
-	void emitHeader( std::ostream &out );
-
-	// The main body of code...
-	void emitCode( std::ostream &out );
-
-	// Utility driver code emission
-	void emitDriverCode( std::ostream &out );
-
-private:
-    virtual FunctionCallPtr	newFunctionCallInternal( const SymbolInfoPtr info,
-													 const std::string &functionName );
-
-    virtual Module *newModule( const std::string &moduleName,
-							   const std::string &fileName );
-
-    virtual LContext *newLContext( Module *module,
-								   SymbolTable &symtab ) const;
-
-	Language myLanguage;
-	SimdInterpreter mySimdInterpreter;
-	LanguageGenerator *myLanguageGenerator;
-	bool myCalledOnly;
+    void defineStandardTypes( std::map<StdType, TypeDefinition> &types, const std::string &funcPref, const std::string & precSuffix ) override;
+    virtual void getStandardMathBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardHalfBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardPrintBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardColorBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
+    virtual void getStandardInterpBodies( FuncDeclList &d, const std::string &funcPref, const std::string &precSuffix );
 };
 
 } // namespace Ctl
 
-#endif
+#endif // INCLUDED_CTL_CODE_GLSL_LANGUAGE_H

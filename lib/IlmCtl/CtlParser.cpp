@@ -1275,6 +1275,11 @@ Parser::parseForStatement()
 	    return init;
     }
 
+    StatementNodePtr forNode = _lcontext.newForNode(condition->lineNumber, condition, init, update, loopBody);
+    if (forNode) {
+        return forNode;
+    }
+
     //
     // If we didn't discarded the loop body, and the loop body does not
     // end in a return statement, then we append the condition update

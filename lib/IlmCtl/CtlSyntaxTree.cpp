@@ -416,6 +416,74 @@ WhileNode::pathEndsWithReturn () const
 }
 
 
+ForNode::ForNode
+    (int lineNumber,
+     const ExprNodePtr &cond,
+     const StatementNodePtr &init,
+     const StatementNodePtr &update,
+     const StatementNodePtr &loopBody)
+    :
+    StatementNode (lineNumber),
+    cond (cond),
+    init (init),
+    update (update),
+    loopBody (loopBody)
+{
+    // empty
+}
+
+
+void
+ForNode::print (int indent) const
+{
+    cout << setw (indent) << "" << lineNumber << " while" << endl;
+
+    if (cond)
+    {
+        cout << setw (indent + 1) << "" << "condition" << endl;
+        cond->print (indent + 2);
+    }
+
+    if (loopBody)
+    {
+        cout << setw (indent + 1) << "" << "loop body" << endl;
+        loopBody->print (indent + 2);
+    }
+
+    if (next)
+        next->print (indent);
+}
+
+
+bool
+ForNode::pathEndsWithReturn () const
+{
+    BoolLiteralNodePtr constCondition = cond.cast<BoolLiteralNode>();
+
+    if (constCondition && constCondition->value)
+    {
+        //
+        // The loop condition has already been evaluated, and it is true.
+        // The only way to get out of the loop is via a return statement.
+        // Code after the loop is unreachable.
+        //
+
+        return true;
+    }
+    else
+    {
+        //
+        // The loop condition must be evaluated at run time.  Code after
+        // the loop is reachable unless all paths through the loop body
+        // end with a return statement.
+        //
+
+        return (loopBody && loopBody->pathEndsWithReturn()) ||
+               (next && next->pathEndsWithReturn());
+    }
+}
+
+
 ExprNode::ExprNode (int lineNumber):
     SyntaxNode (lineNumber),
     type (0)

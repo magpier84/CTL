@@ -318,6 +318,26 @@ CodeWhileNode::generateCode( LContext &ctxt )
 ////////////////////////////////////////
 
 
+CodeForNode::CodeForNode( int lineNumber,
+                          const ExprNodePtr &cond,
+                          const StatementNodePtr &init,
+                          const StatementNodePtr &update,
+                          const StatementNodePtr &loopBody )
+    : ForNode( lineNumber, cond, init, update, loopBody )
+{
+}
+
+void
+CodeForNode::generateCode( LContext &ctxt )
+{
+    CodeLContext &lctxt = static_cast<CodeLContext &>(ctxt);
+    lctxt.generator().loop( lctxt, *this );
+}
+
+
+////////////////////////////////////////
+
+
 CodeBinaryOpNode::CodeBinaryOpNode( int lineNumber,
 									Token op,
 									const ExprNodePtr &leftOperand,

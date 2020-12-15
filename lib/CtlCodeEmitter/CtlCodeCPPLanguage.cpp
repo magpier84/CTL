@@ -907,7 +907,7 @@ CPPGenerator::getBoolLiteral( bool v ) const
 
 
 const std::string &
-CPPGenerator::getConstLiteral( void ) const
+CPPGenerator::getConstLiteral( bool ) const
 {
 	static std::string kConst = "const";
 	return kConst;

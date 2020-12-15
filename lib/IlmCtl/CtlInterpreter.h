@@ -112,6 +112,8 @@ class Interpreter
 
    FunctionCallPtr	newFunctionCall (const std::string &functionName);
 
+   SymbolInfoPtr getSymbol(const std::string& name);
+
     //--------------------------------------------------
     //
     //--------------------------------------------------

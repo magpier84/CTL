@@ -102,6 +102,7 @@ public:
 	virtual void cond( CodeLContext &ctxt, const CodeIfNode &v );
 	virtual void retval( CodeLContext &ctxt, const CodeReturnNode &v );
 	virtual void loop( CodeLContext &ctxt, const CodeWhileNode &v );
+    virtual void loop( CodeLContext &ctxt, const CodeForNode &v );
 	virtual void binaryOp( CodeLContext &ctxt, const CodeBinaryOpNode &v );
 	virtual void unaryOp( CodeLContext &ctxt, const CodeUnaryOpNode &v );
 	virtual void index( CodeLContext &ctxt, const CodeArrayIndexNode &v );
@@ -126,8 +127,6 @@ public:
 
 	virtual void emitToken( Token t );
 
-    bool isConstExpr(const ExprNodePtr& expr) const;
-
 protected:
 	struct ModuleUsage
 	{
@@ -141,7 +140,9 @@ protected:
 	{
 		inline TypeDefinition( void ) : emit( false ) {}
 		inline TypeDefinition( const std::string &n, const std::string &d, const std::string &c = std::string() ) : name( n ), declare( d ), constfunc( c ), emit( false ) {}
+        inline TypeDefinition( const std::string &n, const std::string &d, const std::string &m, const std::string &c ) : name( n ), declare( d ), maker(m), constfunc( c ), emit( false ) {}
 		std::string name;
+        std::string maker;
 		std::string declare;
 		std::string constfunc;
 		ModuleUsageMap moduleUsage;
@@ -183,8 +184,11 @@ protected:
         Vec3i,
         Vec4f,
         Vec4i,
+        Vec8f,
+        Vec8i,
         Mat3f,
         Mat4f,
+        Chromaticities,
         Structs
     };
 
@@ -235,7 +239,9 @@ protected:
     virtual bool supportsPointers( void ) const { return supportsReferences(); }
 	virtual bool supportsStructOperators( void ) const = 0;
     virtual bool supportsStructConstructors( void ) const { return supportsStructOperators(); }
+    virtual bool supportsArrayInitializers( void ) const { return false; }
 	virtual bool needsStructTypedefs( void ) const = 0;
+    virtual bool supportsPrint() const { return true; }
 
 	virtual std::string constructNamespaceTag( const std::string &modName ) = 0;
 	virtual const std::string &getInlineKeyword( void ) const = 0;
@@ -248,7 +254,7 @@ protected:
 	/// @brief return the literal string a boolean value
 	virtual const std::string &getBoolLiteral( bool v ) const = 0;
 	/// @brief return the literal string to tag a value as const
-	virtual const std::string &getConstLiteral( void ) const = 0;
+	virtual const std::string &getConstLiteral( bool isGlobal = false ) const = 0;
 	virtual void startCast( const char *type ) = 0;
 	void swizzling( int) override {}
 
@@ -263,8 +269,15 @@ protected:
 		CTOR,
 		FUNC,
 		ASSIGN,
+		INIT,
 		NONE
 	};
+
+	void initArrayRecurse( CodeLContext &ctxt,
+                           const std::vector<int> &dimensions,
+                           const ExprNodeVector &elements,
+                           size_t dimension,
+                           size_t &index );
 
 	virtual void valueRecurse( CodeLContext &ctxt, const ExprNodeVector &elements,
 							   const DataTypePtr &t, size_t &index,
@@ -294,6 +307,8 @@ protected:
 	virtual void extractSizeAndAdd( const ExprNodePtr &p,
 									const DataTypePtr &funcParm,
 									CodeLContext &ctxt );
+
+    bool isConstExpr(const ExprNodePtr& expr) const;
 
 	struct ArrayInfo
 	{

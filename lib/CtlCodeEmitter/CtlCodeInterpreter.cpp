@@ -60,6 +60,7 @@
 
 #include "CtlCodeCPPLanguage.h"
 #include "CtlCodeCUDALanguage.h"
+#include "CtlCodeGLSLLanguage.h"
 #include "CtlCodeOPENCLLanguage.h"
 #include "CtlCodeNukeLanguage.h"
 
@@ -143,9 +144,10 @@ CodeInterpreter::setLanguage( Language l )
 			myLanguageGenerator = new CPPGenerator( true );
 			break;
 		case OPENCL:
+            myLanguageGenerator = new OPENCLGenerator(mySimdInterpreter);
+            break;
 		case GLSL:
-//			throw std::logic_error( "Sorry, not implemented yet" );
-			myLanguageGenerator = new OPENCLGenerator;
+			myLanguageGenerator = new GLSLGenerator;
 			break;
 		case CUDA:
 //			myLanguageGenerator = new CUDAGenerator;
@@ -216,6 +218,23 @@ CodeInterpreter::initStdLibrary( void )
 	myLanguageGenerator->initStdLibrary();
 }
 
+
+////////////////////////////////////////
+
+
+void CodeInterpreter::loadModule(const std::string &moduleName,
+                                 const std::string &fileName,
+                                 const std::string &moduleSource)
+{
+    mySimdInterpreter.loadModule(moduleName, fileName, moduleSource);
+    Interpreter::loadModule(moduleName, fileName, moduleSource);
+}
+
+void CodeInterpreter::loadSource(const char* source,
+                                 const std::string &moduleName)
+{
+    Interpreter::loadSource(source, moduleName);
+}
 
 ////////////////////////////////////////
 
